@@ -28,33 +28,40 @@ interface IFields {
   terulet?: number;
 }
 
+interface IPagination {
+  sortBy?: string;
+  descending?: false;
+  page?: number;
+  rowsPerPage?: number;
+  rowsNumber?: number;
+  filter?: string;
+}
+
 interface IState {
-  numberOfStreets: number;
   dataN: Array<IFields>; // store documents (records) after get method(s)
+  dataNfiltered: Array<IFields>;
   data: IFields; // temporary object for create, edit and delete method
   dataOld: IFields; // temporary object for patch method (store data here before edit)
   selected: Array<IFields>;
   isLoading: boolean;
-}
-
-function ShowErrorWithNotify(error: any): void {
-  Loading.hide();
-  let msg = `Error on N-side: ${error.response.status} ${error.response.statusText}`;
-  if (error.response.data) {
-    msg += ` - ${error.response.data}`;
-  }
-  Notify.create({ message: msg, color: "negative" });
+  pagination: IPagination;
 }
 
 export const useUtcakStore = defineStore({
   id: "utcakStore",
   state: (): IState => ({
-    numberOfStreets: 0,
     dataN: [],
+    dataNfiltered: [],
     data: {},
     dataOld: {},
     selected: [],
     isLoading: false,
+    pagination: {
+      sortBy: "utca",
+      descending: false,
+      rowsPerPage: 10,
+      filter: "",
+    },
   }),
   getters: {},
   actions: {
@@ -70,9 +77,14 @@ export const useUtcakStore = defineStore({
           }
         })
         .catch((error) => {
-          ShowErrorWithNotify(error);
+          Loading.hide();
+          Notify.create({
+            message: `Error (${error.response.data.status}) while get all: ${error.response.data.message}`,
+            color: "negative",
+          });
         });
     },
+
     async getById(): Promise<void> {
       if (this.data && this.data._id) {
         Loading.show();
@@ -86,10 +98,15 @@ export const useUtcakStore = defineStore({
             }
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            Loading.hide();
+            Notify.create({
+              message: `Error while get by id: ${error.message}`,
+              color: "negative",
+            });
           });
       }
     },
+
     async fetchPaginatedStreets(params: IPaginatedParams): Promise<void> {
       Loading.show();
       $axios
@@ -99,19 +116,20 @@ export const useUtcakStore = defineStore({
         .then((res) => {
           if (res && res.data) {
             this.dataN = res.data.utcak;
-            this.numberOfStreets = res.data.count;
+            // this.numberOfStreets = res.data.count; // ez ide majd nem kell
+            this.pagination.rowsNumber = res.data.count;
           }
           Loading.hide();
         })
         .catch((error) => {
-          console.error("hiba: " + error);
           Loading.hide();
           Notify.create({
-            message: `Error in paginated fetch posts: ${error.message}`,
+            message: `Error (${error.response.data.status}) while fetch paginated: ${error.response.data.message}`,
             color: "negative",
           });
         });
     },
+
     async editById(): Promise<void> {
       if (this.data && this.data._id) {
         const diff: any = {};
@@ -136,7 +154,7 @@ export const useUtcakStore = defineStore({
             Loading.hide();
             if (res && res.data) {
               this.isLoading = false;
-              this.selected = [];
+              this.selected[0] = res.data;
               Notify.create({
                 message: `Document with id=${res.data._id} has been edited successfully!`,
                 color: "positive",
@@ -145,10 +163,15 @@ export const useUtcakStore = defineStore({
             }
           })
           .catch((error) => {
-            ShowErrorWithNotify(error.message);
+            Loading.hide();
+            Notify.create({
+              message: `Error (${error.response.data.status}) while edit by id: ${error.response.data.message}`,
+              color: "negative",
+            });
           });
       }
     },
+
     async deleteById(): Promise<void> {
       Loading.show();
       this.isLoading = true;
@@ -166,10 +189,15 @@ export const useUtcakStore = defineStore({
             else this.isLoading = false;
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            Loading.hide();
+            Notify.create({
+              message: `Error (${error.response.data.status}) while delete by id: ${error.response.data.message}`,
+              color: "negative",
+            });
           });
       }
     },
+
     async create(): Promise<void> {
       if (this.data) {
         Loading.show();
@@ -180,7 +208,7 @@ export const useUtcakStore = defineStore({
             Loading.hide();
             if (res && res.data) {
               // this.data = {};
-              this.getAll();
+              // this.getAll();
               Notify.create({
                 message: `New document with id=${res.data.id} has been saved successfully!`,
                 color: "positive",
@@ -189,7 +217,11 @@ export const useUtcakStore = defineStore({
             }
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            Loading.hide();
+            Notify.create({
+              message: `Error (${error.response.data.status}) while create: ${error.response.data.message}`,
+              color: "negative",
+            });
           });
       }
     },

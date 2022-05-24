@@ -5,16 +5,12 @@
 
   const utcakStore = useUtcakStore();
 
-  const { isLoading, dataN } = storeToRefs(utcakStore);
+  const { isLoading, dataN, pagination, selected } = storeToRefs(utcakStore);
 
   watch(isLoading, () => {
     onRequest({
-      pagination: pagination,
+      pagination: pagination.value,
     });
-  });
-
-  watch(dataN, () => {
-    pagination.value.rowsNumber = utcakStore.numberOfStreets;
   });
 
   function deleteRecord(): void {
@@ -22,17 +18,21 @@
   }
 
   function newRecord(): void {
-    // pass
+    // implementálni kell
+  }
+
+  function filterChanged(): void {
+    selected.value = [];
   }
 
   function editRecord(): void {
-    utcakStore.dataOld = { ...utcakStore.selected[0] };
-    utcakStore.data = { ...utcakStore.selected[0] };
+    utcakStore.data = selected.value[0];
+    utcakStore.getById();
     router.push("/editStreet");
   }
 
   const columns: any[] = [
-    { name: "id", label: "_id", field: "_id", align: "left", sortable: true },
+    { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
     { name: "adoszam", label: "Adószám", field: "adoszam", align: "left", sortable: true },
     {
       name: "adosav",
@@ -51,26 +51,15 @@
     { name: "terulet", label: "Terület", field: "terulet", align: "left", sortable: true },
   ];
 
-  const pagination = ref({
-    sortBy: "utca",
-    descending: false,
-    page: 1,
-    rowsPerPage: 10,
-    rowsNumber: utcakStore.numberOfStreets,
-    filter: "",
-  });
-
-  const filter = ref("");
-
   function onRequest(props: any) {
-    const { page, rowsPerPage, sortBy, descending } = props.pagination;
+    const { page, rowsPerPage, sortBy, descending, filter } = props.pagination;
 
     utcakStore.fetchPaginatedStreets({
       offset: (page - 1) * rowsPerPage,
       limit: rowsPerPage,
       order: sortBy,
       sort: descending ? "-1" : "1",
-      keyword: filter.value,
+      keyword: filter,
     });
 
     // don't forget to update local pagination object
@@ -92,11 +81,11 @@
     <div class="q-pa-md">
       <q-table
         v-model:pagination="pagination"
-        v-model:selected="utcakStore.selected"
+        v-model:selected="selected"
         binary-state-sort
         :columns="columns"
         dense
-        :filter="filter"
+        :filter="pagination.filter"
         row-key="_id"
         :rows="dataN"
         selection="multiple"
@@ -105,7 +94,13 @@
         @request="onRequest"
       >
         <template #top-right>
-          <q-input v-model="filter" debounce="300" dense placeholder="Search">
+          <q-input
+            v-model="pagination.filter"
+            debounce="300"
+            dense
+            placeholder="Search"
+            @update:model-value="filterChanged()"
+          >
             <template #append>
               <q-icon name="search" />
             </template>
@@ -114,19 +109,19 @@
       </q-table>
       <!-- Buttons:  -->
       <div class="row justify-center q-ma-sm q-gutter-sm">
-        <q-btn v-show="utcakStore.selected.length == 0" color="green" no-caps @click="newRecord">
+        <q-btn v-show="selected.length == 0" color="green" no-caps @click="newRecord">
           New record
         </q-btn>
-        <q-btn v-show="utcakStore.selected.length == 1" color="blue" no-caps @click="editRecord">
+        <q-btn v-show="selected.length == 1" color="blue" no-caps @click="editRecord">
           Edit record
         </q-btn>
-        <q-btn v-show="utcakStore.selected.length != 0" color="red" no-caps @click="deleteRecord">
-          {{
-            utcakStore.selected.length > 1 ? "Delete selected records" : "Delete selected record"
-          }}
+        <q-btn v-show="selected.length != 0" color="red" no-caps @click="deleteRecord">
+          {{ selected.length > 1 ? "Delete selected records" : "Delete selected record" }}
         </q-btn>
       </div>
-      {{ pagination }}
+      <p>Pagination object: {{ pagination }}</p>
+      <p>Selected array: {{ selected }}</p>
+      <div>Filter: "{{ pagination.filter }}"</div>
     </div>
   </q-page>
 </template>

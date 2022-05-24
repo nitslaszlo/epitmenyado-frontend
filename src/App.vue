@@ -63,7 +63,11 @@
       <q-header class="bg-primary text-white text-left" elevated>
         <q-toolbar>
           <q-btn dense flat icon="mdi-menu" round @click="leftDrawer = !leftDrawer" />
-          <q-toolbar-title id="title" style="cursor: pointer" @click="router.push({ path: '/' })">
+          <q-toolbar-title
+            id="title"
+            style="cursor: pointer"
+            @click="router.push({ path: '/startPage' })"
+          >
             <q-avatar>
               <img src="src/assets/Jedlik_small.png" />
             </q-avatar>
@@ -90,7 +94,7 @@
           <!-- routes: -->
           <q-list>
             <template v-for="(menuItem, index) in menuItems" :key="index">
-              <q-item clickable :disable="menuItem.disabled" :to="menuItem.route">
+              <q-item clickable :disable="menuItem.disabled" @click="router.push(menuItem.route)">
                 <q-item-section avatar>
                   <q-icon :name="menuItem.icon" />
                 </q-item-section>
@@ -100,17 +104,11 @@
               </q-item>
               <q-separator v-if="menuItem.separator" :key="'sep' + index" />
             </template>
-            <q-item clickable :disable="usersStore.loggedUser == null" to="/qtable">
+            <q-item clickable :disable="usersStore.loggedUser == null" :to="{ name: 'qtable' }">
               <q-item-section avatar>
                 <q-icon name="mdi-table" />
               </q-item-section>
               <q-item-section>Edit data</q-item-section>
-            </q-item>
-            <q-item clickable :disable="usersStore.loggedUser == null" to="/editStreet">
-              <q-item-section avatar>
-                <q-icon name="mdi-table" />
-              </q-item-section>
-              <q-item-section>Edit street</q-item-section>
             </q-item>
             <q-separator />
           </q-list>

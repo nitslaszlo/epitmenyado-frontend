@@ -8,27 +8,27 @@ import EditStreetView from "./views/EditStreetView.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "StartPage",
+    name: "startPage",
     component: StartPageView,
   },
   {
     path: "/account",
-    name: "Account",
+    name: "account",
     component: AccountView,
   },
   {
     path: "/editStreet",
-    name: "Edit street",
+    name: "editStreet",
     component: EditStreetView,
   },
   {
     path: "/qtable",
-    name: "q-table",
+    name: "qtable",
     component: QTableViewVue,
   },
   {
     path: "/about",
-    name: "About",
+    name: "about",
     component: AboutView,
   },
 ];
