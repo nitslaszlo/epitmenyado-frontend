@@ -1,30 +1,24 @@
 <script setup lang="ts">
   import { useUtcakStore } from "../store/utcakStore";
+  import { storeToRefs } from "pinia";
+  import router from "src/router";
 
   const utcakStore = useUtcakStore();
-  // Selected row(s) -> selection="single" or selection="multiple"
-  // const selected = ref<any>([]);
+
+  const { isLoading, dataN } = storeToRefs(utcakStore);
+
+  watch(isLoading, () => {
+    onRequest({
+      pagination: pagination,
+    });
+  });
+
+  watch(dataN, () => {
+    pagination.value.rowsNumber = utcakStore.numberOfStreets;
+  });
 
   function deleteRecord(): void {
     utcakStore.deleteById();
-    // for (const e of selected.value) {
-    //   utcakStore.data._id = e._id;
-    //   await utcakStore.deleteById().then(() => {
-    //     selected.value = selected.value.filter((t: any) => {
-    //       t._id != e._id;
-    //     });
-    //     if (selected.value.length == 0) {
-    //       onRequest({
-    //         pagination: pagination.value,
-    //       });
-    //     }
-    //   });
-
-    //  utcakStore.selected = [];
-    // onRequest({
-    //   pagination: pagination.value,
-    // });
-    // if (utcakStore.dataN) pagination.value.rowsNumber = utcakStore.numberOfStreets;
   }
 
   function newRecord(): void {
@@ -32,7 +26,9 @@
   }
 
   function editRecord(): void {
-    // pass
+    utcakStore.dataOld = { ...utcakStore.selected[0] };
+    utcakStore.data = { ...utcakStore.selected[0] };
+    router.push("/editStreet");
   }
 
   const columns: any[] = [
@@ -65,20 +61,6 @@
   });
 
   const filter = ref("");
-
-  // watch(utcakStore, () => {
-  //   pagination.value.rowsNumber = utcakStore.numberOfStreets;
-  // onRequest({
-  //   pagination: pagination.value,
-  // });
-  // });
-
-  watch(utcakStore.refreshNeeded.valueOf, () => {
-    pagination.value.rowsNumber = utcakStore.numberOfStreets;
-    onRequest({
-      pagination: pagination.value,
-    });
-  });
 
   function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending } = props.pagination;
@@ -116,7 +98,7 @@
         dense
         :filter="filter"
         row-key="_id"
-        :rows="utcakStore.dataN"
+        :rows="dataN"
         selection="multiple"
         title="Utcák"
         wrap-cells
@@ -129,21 +111,8 @@
             </template>
           </q-input>
         </template>
-        <!-- slot1: -->
-        <!-- <template #body-cell-boolField="props">
-          <q-td :props="props">
-            <q-badge v-if="props.value" color="green" label="Yes" outline />
-            <q-badge v-else color="red" label="No" outline />
-          </q-td>
-        </template> -->
-        <!-- slot2: -->
-        <!-- <template #body-cell-imgField="props">
-          <q-td :props="props">
-            <img :src="props.value" style="max-height: 100px" />
-          </q-td>
-        </template> -->
       </q-table>
-      <!-- Button for delete selected record: -->
+      <!-- Buttons:  -->
       <div class="row justify-center q-ma-sm q-gutter-sm">
         <q-btn v-show="utcakStore.selected.length == 0" color="green" no-caps @click="newRecord">
           New record
@@ -157,6 +126,7 @@
           }}
         </q-btn>
       </div>
+      {{ pagination }}
     </div>
   </q-page>
 </template>

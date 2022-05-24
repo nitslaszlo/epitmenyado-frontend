@@ -106,6 +106,12 @@
               </q-item-section>
               <q-item-section>Edit data</q-item-section>
             </q-item>
+            <q-item clickable :disable="usersStore.loggedUser == null" to="/editStreet">
+              <q-item-section avatar>
+                <q-icon name="mdi-table" />
+              </q-item-section>
+              <q-item-section>Edit street</q-item-section>
+            </q-item>
             <q-separator />
           </q-list>
           <!-- links: -->

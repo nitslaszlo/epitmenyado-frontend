@@ -1,7 +1,7 @@
 import $axios from "./axios.instance";
 import { defineStore } from "pinia";
 import { Notify, Loading } from "quasar";
-// import router from "src/router";
+import router from "src/router";
 
 Notify.setDefaults({
   position: "bottom",
@@ -34,7 +34,7 @@ interface IState {
   data: IFields; // temporary object for create, edit and delete method
   dataOld: IFields; // temporary object for patch method (store data here before edit)
   selected: Array<IFields>;
-  refreshNeeded: boolean;
+  isLoading: boolean;
 }
 
 function ShowErrorWithNotify(error: any): void {
@@ -54,7 +54,7 @@ export const useUtcakStore = defineStore({
     data: {},
     dataOld: {},
     selected: [],
-    refreshNeeded: false,
+    isLoading: false,
   }),
   getters: {},
   actions: {
@@ -125,48 +125,50 @@ export const useUtcakStore = defineStore({
             message: "Nothing changed!",
             color: "negative",
           });
+          this.isLoading = false;
           process.exit(0);
         }
         Loading.show();
+        this.isLoading = true;
         $axios
           .patch(`api/utcak/${this.data._id}`, diff)
           .then((res) => {
             Loading.hide();
             if (res && res.data) {
-              this.data = {};
-              this.getAll();
+              this.isLoading = false;
+              this.selected = [];
               Notify.create({
-                message: `Document with id=${res.data.id} has been edited successfully!`,
+                message: `Document with id=${res.data._id} has been edited successfully!`,
                 color: "positive",
               });
+              router.push("/qtable");
             }
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            ShowErrorWithNotify(error.message);
           });
       }
     },
     async deleteById(): Promise<void> {
-      for (const sel of this.selected) {
-        Loading.show();
-        const id = sel._id;
+      Loading.show();
+      this.isLoading = true;
+      if (this.selected.length) {
+        const id_for_delete = this.selected.pop()?._id;
         await $axios
-          .delete(`api/utcak/${id}`)
+          .delete(`api/utcak/${id_for_delete}`)
           .then(() => {
             Loading.hide();
-            // this.dataN = this.dataN.filter((i) => i._id !== id);
-            // this.numberOfStreets = this.numberOfStreets - 1;
-            // this.data = {};
             Notify.create({
-              message: `Document with id=${id} has been deleted successfully!`,
+              message: `Document with id=${id_for_delete} has been deleted successfully!`,
               color: "positive",
             });
+            if (this.selected.length) this.deleteById();
+            else this.isLoading = false;
           })
           .catch((error) => {
             ShowErrorWithNotify(error);
           });
       }
-      this.refreshNeeded = true;
     },
     async create(): Promise<void> {
       if (this.data) {
