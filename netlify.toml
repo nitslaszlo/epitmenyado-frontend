@@ -1,0 +1,12 @@
+# The following redirect is intended for use with most SPA's that handles routing internally.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build]
+command = "CI= npm run build"
+
+# Skip all post processing in deploy previews, ignoring any other settings
+[build.processing]
+  skip_processing = true

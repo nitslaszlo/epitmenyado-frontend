@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "Vue.volar",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "christian-kohler.path-intellisense",
+        "rangav.vscode-thunder-client",
+        "antfu.iconify",
+        "ms-edgedevtools.vscode-edge-devtools",
+        "eg2.vscode-npm-script",
+        "formulahendry.auto-rename-tag",
+        "Vue.vscode-typescript-vue-plugin"
+    ]
+}

@@ -1,0 +1,46 @@
+{
+    "eslint.alwaysShowStatus": true,
+    "eslint.validate": ["javascript", "typescript", "vue"],
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "[typescript]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[vue]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.minimap.enabled": false,
+    "editor.wordWrap": "on",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "javascript.validate.enable": false,
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "git.autofetchPeriod": 180,
+    "files.autoSave": "afterDelay",
+    "files.eol": "\r\n",
+    "files.exclude": {
+      "**/.git": true,
+      "**/.gitignore": false,
+      "**/.vscode": false,
+      "**/tsconfig.json": false,
+      "**/tslint.json": false,
+      "**/package-lock.json": true,
+      "**/dist": false,
+      "**/node_modules": false,
+      "**/*.js.map": true,
+      "**/*.npmrc": true
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "vscode-edge-devtools.mirrorEdits": true,
+    "vscode-edge-devtools.webhint": false,
+    "json.schemaDownload.enable": false,
+  }

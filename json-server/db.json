@@ -1,0 +1,108 @@
+{
+  "events": [
+    {
+      "id": 123,
+      "category": "animal welfare",
+      "title": "Cat Adoption Day",
+      "description": "Find your new feline friend at this event.",
+      "location": "Meow Town",
+      "date": "January 28, 2022",
+      "time": "12:00",
+      "organizer": "Kat Laydee"
+    },
+    {
+      "id": 456,
+      "category": "food",
+      "title": "Community Gardening",
+      "description": "Join us as we tend to the community edible plants.",
+      "location": "Flora City",
+      "date": "March 14, 2022",
+      "time": "10:00",
+      "organizer": "Fern Pollin"
+    },
+    {
+      "id": 789,
+      "category": "sustainability",
+      "title": "Beach Cleanup",
+      "description": "Help pick up trash along the shore.",
+      "location": "Playa Del Carmen",
+      "date": "July 22, 2022",
+      "time": "11:00",
+      "organizer": "Carey Wales"
+    },
+    {
+      "id": 100,
+      "category": "sustainability",
+      "title": "Work at home",
+      "description": "Help pick up trash along the shore.",
+      "location": "Playa Del Carmen",
+      "date": "July 22, 2022",
+      "time": "11:00",
+      "organizer": "Carey Wales"
+    }
+  ],
+  "ingatlan": [
+    {
+      "id": 1,
+      "kategoriaId": 1,
+      "kategoria": null,
+      "leiras": "Kertvárosi részén, egyszintes házat kínálunk nyugodt környezetben, nagy telken.",
+      "hirdetesDatuma": "2022-02-21T00:00:00+01:00",
+      "tehermenetes": true,
+      "kepUrl": "https://cdn.jhmrad.com/wp-content/uploads/three-single-storey-houses-elegance-amazing_704000.jpg"
+    },
+    {
+      "id": 2,
+      "kategoriaId": 1,
+      "kategoria": null,
+      "leiras": "Belvárosi környezetben, árnyékos helyen kis méretú családi ház eladó. Tömegközlekedéssel könnyen megközelíthető.",
+      "hirdetesDatuma": "2022-02-28T00:00:00+01:00",
+      "tehermenetes": true,
+      "kepUrl": "https://www.westsideseattle.com/sites/default/files/styles/news_teaser/public/images/archive/ballardnewstribune.com/content/articles/2008/11/21/features/columnists/column07.jpg?itok=wMrlOwFU"
+    },
+    {
+      "id": 3,
+      "kategoriaId": 2,
+      "kategoria": null,
+      "leiras": "Kétszintes berendezett lakás a belvárosban kiadó.",
+      "hirdetesDatuma": "2022-02-24T00:00:00+01:00",
+      "tehermenetes": true,
+      "kepUrl": "https://images.unsplash.com/photo-1606074280798-2dabb75ce10c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80"
+    },
+    {
+      "id": 4,
+      "kategoriaId": 4,
+      "kategoria": null,
+      "leiras": "Nagy garázs kertvárosi környezetben kiadó",
+      "hirdetesDatuma": "2022-02-26T00:00:00+01:00",
+      "tehermenetes": true,
+      "kepUrl": "https://www.afritechmedia.com/wp-content/uploads/2021/11/How-Can-You-Protect-Your-Garage-Floor-612x340.jpg"
+    },
+    {
+      "id": 5,
+      "kategoriaId": 5,
+      "kategoria": null,
+      "leiras": "10 hektáros mezőhazdasági terület eladó",
+      "hirdetesDatuma": "2022-03-02T00:00:00+01:00",
+      "tehermenetes": true,
+      "kepUrl": "https://i2-prod.manchestereveningnews.co.uk/incoming/article18411144.ece/ALTERNATES/s810/0_gettyimages-1151774950-170667a.jpg"
+    },
+    {
+      "id": 6,
+      "kategoriaId": 6,
+      "kategoria": null,
+      "leiras": "Felújításra szoruló üzemcsarnok zöld környezetben áron alul eladó",
+      "hirdetesDatuma": "2022-02-23T00:00:00+01:00",
+      "tehermenetes": false,
+      "kepUrl": "https://cdn.pixabay.com/photo/2019/01/31/09/24/urban-3966306_960_720.jpg"
+    }
+  ],
+  "kategoriak": [
+    { "id": 1, "megnevezes": "Ház" },
+    { "id": 2, "megnevezes": "Lakás" },
+    { "id": 3, "megnevezes": "Építési telek" },
+    { "id": 4, "megnevezes": "Garázs" },
+    { "id": 5, "megnevezes": "Mezőgazdasági terület" },
+    { "id": 6, "megnevezes": "Ipari ingatlan" }
+  ]
+}
