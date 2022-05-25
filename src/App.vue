@@ -69,7 +69,7 @@
             @click="router.push({ path: '/startPage' })"
           >
             <q-avatar>
-              <img src="src/assets/Jedlik_small.png" />
+              <img src="./assets/Jedlik_small.png" />
             </q-avatar>
             Építményadó 2022.05.16 (hu) -
             {{ usersStore.loggedUser ? usersStore.loggedUser?.name : $t("noUser") }}

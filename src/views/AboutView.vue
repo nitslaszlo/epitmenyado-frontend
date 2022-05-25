@@ -3,7 +3,7 @@
 <template>
   <q-page>
     <div class="column flex-center">
-      <img alt="Jedlik logo" class="q-ma-md" src="src/assets/Jedlik_big.png" />
+      <img alt="Jedlik logo" class="q-ma-md" src="../assets/Jedlik_big.png" />
       <h2>Jedlik Ányos Technikum - Győr</h2>
       <h2>{{ $t("aboutMsg") }}</h2>
       <h2>
