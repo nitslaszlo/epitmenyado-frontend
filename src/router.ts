@@ -4,6 +4,7 @@ import AccountView from "./views/AccountView.vue";
 import QTableViewVue from "./views/QTableView.vue";
 import StartPageView from "./views/StartPageView.vue";
 import EditStreetView from "./views/EditStreetView.vue";
+import NewStreetView from "./views/NewStreetView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/editStreet",
     name: "editStreet",
     component: EditStreetView,
+  },
+  {
+    path: "/newStreet",
+    name: "newStreet",
+    component: NewStreetView,
   },
   {
     path: "/qtable",

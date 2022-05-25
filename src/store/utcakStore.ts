@@ -22,7 +22,7 @@ interface IPaginatedParams {
 interface IFields {
   _id?: number; // PK
   adosav?: number | { sav: string; ado: number; hatar: number }; // FK
-  adoszam?: string;
+  adoszam?: number;
   utca?: string;
   hazszam?: string;
   terulet?: number;
@@ -210,9 +210,10 @@ export const useUtcakStore = defineStore({
               // this.data = {};
               // this.getAll();
               Notify.create({
-                message: `New document with id=${res.data.id} has been saved successfully!`,
+                message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",
               });
+              router.push("/qtable");
               // router.push({ name: "page_name" });
             }
           })

@@ -25,7 +25,7 @@
   onMounted(() => {
     utcakStore.getAll();
     adosavokStore.getAll();
-    data.value.adoszam = "68396";
+    data.value.adoszam = 68396;
   });
 </script>
 <template>

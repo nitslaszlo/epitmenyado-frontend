@@ -18,7 +18,8 @@
   }
 
   function newRecord(): void {
-    // implementálni kell
+    utcakStore.data = {};
+    router.push("/newStreet");
   }
 
   function filterChanged(): void {
