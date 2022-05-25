@@ -34,7 +34,7 @@
             map-options
             option-label="sav"
             option-value="_id"
-            :options="adosavokStore.dataN"
+            :options="adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))"
           />
           <q-input v-model="utcakStore.data.adoszam" filled label="Adószám:" type="text" />
           <q-input v-model="utcakStore.data.utca" filled label="Utca:" type="text" />

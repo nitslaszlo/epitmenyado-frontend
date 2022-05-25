@@ -6,10 +6,17 @@
   const utcakStore = useUtcakStore();
   const adosavokStore = useAdosavokStore();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ISav {
+    sav: string;
+    ado: number;
+    hatar: number;
+  }
+
   function ado(sav: any, terulet: any): number {
     const adosav: any[] = adosavokStore.dataN.filter((x) => x.sav == sav.sav);
     const ado: number = adosav[0].ado * terulet;
-    return ado > 10000 ? ado : 0;
+    return ado < 10000 ? 0 : ado;
   }
 
   const { data, dataN, dataNfiltered } = storeToRefs(utcakStore);
@@ -50,6 +57,20 @@
             </span>
           </div>
           <div v-else><span>Nem szerepel az adatállományban</span></div>
+          <p>5. feladat.</p>
+          <span
+            v-for="(item, index) in adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))"
+            :key="index"
+          >
+            {{ item.sav }} sávba
+            {{ utcakStore.dataN.filter((x) => ((x.adosav! as ISav).sav == item.sav)).length }}
+            telek esik, az adó
+            {{ utcakStore.dataN.filter((x) => ((x.adosav! as ISav).sav == item.sav)).reduce((p, c) => p + ado(c.adosav, c.terulet), 0) }}
+            Ft.
+            <br />
+          </span>
+          <p>6. feladat. A több sávba sorolt utcák:</p>
+          {{ utcakStore }}
         </q-form>
         <p>Data filtered: {{ dataNfiltered }}</p>
         <p>All data: {{ dataN }}</p>
