@@ -44,9 +44,9 @@
             <q-btn class="q-mr-md" color="green" label="Mentés" no-caps type="submit" />
             <q-btn class="q-mr-md" color="red" label="Mégsem" no-caps type="reset" />
           </div>
-          <p>Actual: {{ utcakStore.data }}</p>
-          <p>Old: {{ utcakStore.dataOld }}</p>
-          <p>Selected: {{ utcakStore.selected }}</p>
+          <!-- <p>Actual: {{ utcakStore.data }}</p> -->
+          <!-- <p>Old: {{ utcakStore.dataOld }}</p> -->
+          <!-- <p>Selected: {{ utcakStore.selected }}</p> -->
         </q-form>
       </div>
     </div>

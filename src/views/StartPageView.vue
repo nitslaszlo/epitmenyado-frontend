@@ -3,10 +3,13 @@
   import { useUtcakStore } from "../store/utcakStore";
   import { storeToRefs } from "pinia";
   import { useAdosavokStore } from "../store/adosavokStore";
+  import TxtWritter from "../components/TxtWriter.vue";
 
   const utcakStore = useUtcakStore();
   const adosavokStore = useAdosavokStore();
   const utcakStat = new Map<string, string>();
+  const fizetendoAdo = new Map<number, number>();
+  const fizetendoTxt = ref("");
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ISav {
@@ -40,6 +43,25 @@
         }
       }
     }
+    // fizetendo.txt állományhoz a fizetendoTxt tartalmának összeállítása
+    for (const item of dataN.value) {
+      const aktAdosáv: ISav = item.adosav as ISav;
+      const adószám: number = item.adoszam as number;
+      const terület: number = item.terulet as number;
+      if (!fizetendoAdo.has(adószám)) {
+        // első ingatlan adója:
+        fizetendoAdo.set(adószám, ado(aktAdosáv, terület));
+      } else {
+        // többi ingatlan adója:
+        const korábbiIngatlanokAdója: number = fizetendoAdo.get(adószám) as number;
+        fizetendoAdo.set(adószám, korábbiIngatlanokAdója + ado(aktAdosáv, terület));
+      }
+    }
+    for (const item of fizetendoAdo) {
+      const adószám: number = item[0]; // key
+      const összesAdó: number = item[1]; // value
+      fizetendoTxt.value += `${adószám} ${összesAdó}\r\n`;
+    }
   });
 
   onMounted(() => {
@@ -64,8 +86,7 @@
           />
           <div v-if="dataNfiltered.length > 0">
             <span v-for="(item, index) in dataNfiltered" :key="index">
-              {{ item.utca }} utca {{ item.hazszam }} ( Éves adó:
-              {{ ado(item.adosav, item.terulet) }} Ft )
+              {{ item.utca }} utca {{ item.hazszam }}
               <br />
             </span>
           </div>
@@ -89,11 +110,17 @@
               <br />
             </template>
           </template>
-          {{ utcakStore }}
+          <p>7. feladat.</p>
+          <TxtWritter
+            :content="fizetendoTxt"
+            filename="fizetendo.txt"
+            title="fizetendo.txt írása"
+          />
         </q-form>
-        <p>Data filtered: {{ dataNfiltered }}</p>
-        <p>All data: {{ dataN }}</p>
-        <p>{{ utcakStat }}</p>
+        <!-- <p>fizetendoAdó: {{ fizetendoTxt }}</p> -->
+        <!-- <p>Data filtered: {{ dataNfiltered }}</p> -->
+        <!-- <p>Utcak stat: {{ utcakStat }}</p> -->
+        <!-- <p>All data: {{ dataN }}</p> -->
       </div>
     </div>
   </q-page>

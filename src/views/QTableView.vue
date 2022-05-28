@@ -2,8 +2,10 @@
   import { useUtcakStore } from "../store/utcakStore";
   import { storeToRefs } from "pinia";
   import router from "src/router";
+  import { useUsersStore } from "../store/usersStore";
 
   const utcakStore = useUtcakStore();
+  const usersStore = useUsersStore();
 
   const { isLoading, dataN, pagination, selected } = storeToRefs(utcakStore);
 
@@ -30,6 +32,10 @@
     utcakStore.data = selected.value[0];
     utcakStore.getById();
     router.push("/editStreet");
+  }
+
+  function clearSelection(): void {
+    selected.value = [];
   }
 
   const columns: any[] = [
@@ -110,7 +116,15 @@
       </q-table>
       <!-- Buttons:  -->
       <div class="row justify-center q-ma-sm q-gutter-sm">
-        <q-btn v-show="selected.length == 0" color="green" no-caps @click="newRecord">
+        <q-btn v-show="selected.length != 0" color="orange" no-caps @click="clearSelection">
+          {{ selected.length > 1 ? "Clear selections" : "Clear selection" }}
+        </q-btn>
+        <q-btn
+          v-show="usersStore.loggedUser && selected.length == 0"
+          color="green"
+          no-caps
+          @click="newRecord"
+        >
           New record
         </q-btn>
         <q-btn v-show="selected.length == 1" color="blue" no-caps @click="editRecord">
@@ -120,9 +134,9 @@
           {{ selected.length > 1 ? "Delete selected records" : "Delete selected record" }}
         </q-btn>
       </div>
-      <p>Pagination object: {{ pagination }}</p>
-      <p>Selected array: {{ selected }}</p>
-      <div>Filter: "{{ pagination.filter }}"</div>
+      <!-- <p>Pagination object: {{ pagination }}</p> -->
+      <!-- <p>Selected array: {{ selected }}</p> -->
+      <!-- <div>Filter: "{{ pagination.filter }}"</div> -->
     </div>
   </q-page>
 </template>
