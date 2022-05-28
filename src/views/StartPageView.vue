@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 <script setup lang="ts">
   import { useUtcakStore } from "../store/utcakStore";
   import { storeToRefs } from "pinia";
@@ -5,6 +6,7 @@
 
   const utcakStore = useUtcakStore();
   const adosavokStore = useAdosavokStore();
+  const utcakStat = new Map<string, string>();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ISav {
@@ -27,6 +29,17 @@
 
   watch(dataN, () => {
     dataNfiltered.value = dataN.value.filter((x) => x.adoszam == data.value.adoszam);
+    for (const item of dataN.value) {
+      const aktUtca: string = item.utca as string;
+      const aktAdosáv: ISav = item.adosav as ISav;
+      if (!utcakStat.has(aktUtca)) {
+        utcakStat.set(aktUtca, aktAdosáv.sav);
+      } else {
+        if (utcakStat.get(aktUtca)?.indexOf(aktAdosáv.sav) == -1) {
+          utcakStat.set(aktUtca, utcakStat.get(aktUtca) + aktAdosáv.sav);
+        }
+      }
+    }
   });
 
   onMounted(() => {
@@ -70,10 +83,17 @@
             <br />
           </span>
           <p>6. feladat. A több sávba sorolt utcák:</p>
+          <template v-for="(item, index) in utcakStat" :key="index">
+            <template v-if="item[1].length > 1">
+              <span>{{ item[0] }}</span>
+              <br />
+            </template>
+          </template>
           {{ utcakStore }}
         </q-form>
         <p>Data filtered: {{ dataNfiltered }}</p>
         <p>All data: {{ dataN }}</p>
+        <p>{{ utcakStat }}</p>
       </div>
     </div>
   </q-page>
