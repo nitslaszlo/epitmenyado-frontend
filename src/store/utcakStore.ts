@@ -159,7 +159,7 @@ export const useUtcakStore = defineStore({
                 message: `Document with id=${res.data._id} has been edited successfully!`,
                 color: "positive",
               });
-              router.push("/qtable");
+              router.push("/qtablestreet");
             }
           })
           .catch((error) => {
@@ -213,7 +213,7 @@ export const useUtcakStore = defineStore({
                 message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",
               });
-              router.push("/qtable");
+              router.push("/qtablestreet");
               // router.push({ name: "page_name" });
             }
           })

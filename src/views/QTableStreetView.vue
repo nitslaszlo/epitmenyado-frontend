@@ -96,7 +96,7 @@
         row-key="_id"
         :rows="dataN"
         selection="multiple"
-        title="Utcák"
+        title="Streets"
         wrap-cells
         @request="onRequest"
       >

@@ -1,7 +1,7 @@
 import $axios from "./axios.instance";
 import { defineStore } from "pinia";
 import { Notify, Loading } from "quasar";
-// import router from "src/router";
+import router from "src/router";
 
 Notify.setDefaults({
   position: "bottom",
@@ -21,15 +21,8 @@ interface IState {
   dataN: Array<IFields>; // store documents (records) after get method(s)
   data: IFields; // temporary object for create, edit and delete method
   dataOld: IFields; // temporary object for patch method (store data here before edit)
-}
-
-function ShowErrorWithNotify(error: any): void {
-  Loading.hide();
-  let msg = `Error on N-side: ${error.response.status} ${error.response.statusText}`;
-  if (error.response.data) {
-    msg += ` - ${error.response.data}`;
-  }
-  Notify.create({ message: msg, color: "negative" });
+  selected: Array<IFields>;
+  isLoading: boolean;
 }
 
 export const useAdosavokStore = defineStore({
@@ -38,6 +31,8 @@ export const useAdosavokStore = defineStore({
     dataN: [],
     data: {},
     dataOld: {},
+    selected: [],
+    isLoading: false,
   }),
   getters: {},
   actions: {
@@ -53,7 +48,11 @@ export const useAdosavokStore = defineStore({
           }
         })
         .catch((error) => {
-          ShowErrorWithNotify(error);
+          Loading.hide();
+          Notify.create({
+            message: `Error (${error.response.data.status}) while get all: ${error.response.data.message}`,
+            color: "negative",
+          });
         });
     },
     async getById(): Promise<void> {
@@ -69,7 +68,11 @@ export const useAdosavokStore = defineStore({
             }
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            Loading.hide();
+            Notify.create({
+              message: `Error while get by id: ${error.message}`,
+              color: "negative",
+            });
           });
       }
     },
@@ -97,34 +100,44 @@ export const useAdosavokStore = defineStore({
               this.data = {};
               this.getAll();
               Notify.create({
-                message: `Document with id=${res.data.id} has been edited successfully!`,
+                message: `Document with id=${res.data._id} has been edited successfully!`,
                 color: "positive",
               });
+              router.push("/qtabletaxband");
             }
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            Loading.hide();
+            Notify.create({
+              message: `Error (${error.response.data.status}) while edit by id: ${error.response.data.message}`,
+              color: "negative",
+            });
           });
       }
     },
     async deleteById(): Promise<void> {
-      if (this.data && this.data._id) {
-        Loading.show();
-        const id = this.data._id;
-        $axios
-          .delete(`api/adosavok/${this.data._id}`)
+      Loading.show();
+      this.isLoading = true;
+      if (this.selected.length) {
+        const id_for_delete = this.selected.pop()?._id;
+        await $axios
+          .delete(`api/adosavok/${id_for_delete}`)
           .then(() => {
             Loading.hide();
-            this.getAll();
-            this.data = {};
             Notify.create({
-              message: `Document with id=${id} has been deleted successfully!`,
+              message: `Document with id=${id_for_delete} has been deleted successfully!`,
               color: "positive",
             });
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            Loading.hide();
+            Notify.create({
+              message: `Error (${error.response.data.status}) while delete by id: ${error.response.data.message}`,
+              color: "negative",
+            });
           });
+        if (this.selected.length) this.deleteById();
+        else this.isLoading = false;
       }
     },
     async create(): Promise<void> {
@@ -139,14 +152,18 @@ export const useAdosavokStore = defineStore({
               // this.data = {};
               this.getAll();
               Notify.create({
-                message: `New document with id=${res.data.id} has been saved successfully!`,
+                message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",
               });
-              // router.push({ name: "page_name" });
+              router.push("/qtabletaxband");
             }
           })
           .catch((error) => {
-            ShowErrorWithNotify(error);
+            Loading.hide();
+            Notify.create({
+              message: `Error (${error.response.data.status}) while create: ${error.response.data.message}`,
+              color: "negative",
+            });
           });
       }
     },

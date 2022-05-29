@@ -1,10 +1,13 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import AboutView from "./views/AboutView.vue";
 import AccountView from "./views/AccountView.vue";
-import QTableViewVue from "./views/QTableView.vue";
+import QTableStreetView from "./views/QTableStreetView.vue";
+import QTableTaxBandView from "./views/QTableTaxBandView.vue";
 import StartPageView from "./views/StartPageView.vue";
 import EditStreetView from "./views/EditStreetView.vue";
 import NewStreetView from "./views/NewStreetView.vue";
+import EditTaxBandView from "./views/EditTaxBandView.vue";
+import NewTaxBandView from "./views/NewTaxBandView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -28,9 +31,24 @@ const routes: Array<RouteRecordRaw> = [
     component: NewStreetView,
   },
   {
-    path: "/qtable",
-    name: "qtable",
-    component: QTableViewVue,
+    path: "/qtablestreet",
+    name: "qtablestreet",
+    component: QTableStreetView,
+  },
+  {
+    path: "/editTaxBand",
+    name: "editTaxBand",
+    component: EditTaxBandView,
+  },
+  {
+    path: "/newTaxBand",
+    name: "newTaxBand",
+    component: NewTaxBandView,
+  },
+  {
+    path: "/qtabletaxband",
+    name: "qtabletaxband",
+    component: QTableTaxBandView,
   },
   {
     path: "/about",

@@ -104,11 +104,25 @@
               </q-item>
               <q-separator v-if="menuItem.separator" :key="'sep' + index" />
             </template>
-            <q-item clickable :disable="usersStore.loggedUser == null" :to="{ name: 'qtable' }">
+            <q-item
+              clickable
+              :disable="usersStore.loggedUser == null"
+              :to="{ name: 'qtablestreet' }"
+            >
               <q-item-section avatar>
                 <q-icon name="mdi-table" />
               </q-item-section>
-              <q-item-section>Edit data</q-item-section>
+              <q-item-section>Edit streets</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              :disable="usersStore.loggedUser == null"
+              :to="{ name: 'qtabletaxband' }"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-table" />
+              </q-item-section>
+              <q-item-section>Edit tax bands</q-item-section>
             </q-item>
             <q-separator />
           </q-list>

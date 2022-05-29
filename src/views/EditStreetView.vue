@@ -15,7 +15,7 @@
   }
 
   function Reset() {
-    router.push("/qtable");
+    router.push("/qtablestreet");
   }
 </script>
 
