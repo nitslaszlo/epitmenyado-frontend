@@ -7,7 +7,7 @@
   const leftDrawer = ref<boolean>(true);
   const usersStore = useUsersStore();
   const $q = useQuasar();
-  if ($q.platform.is.mobile) {
+  if ($q.screen.lt.md) {
     leftDrawer.value = false;
   }
 
