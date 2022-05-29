@@ -2,9 +2,14 @@
   import { useI18n } from "vue-i18n";
   import router from "src/router";
   import { useUsersStore } from "./store/usersStore";
+  import { useQuasar } from "quasar";
 
   const leftDrawer = ref<boolean>(true);
   const usersStore = useUsersStore();
+  const $q = useQuasar();
+  if ($q.platform.is.mobile) {
+    leftDrawer.value = false;
+  }
 
   let { locale, t } = useI18n({
     inheritLocale: true,
