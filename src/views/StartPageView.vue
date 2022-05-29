@@ -10,6 +10,7 @@
   const utcakStat = new Map<string, string>();
   const fizetendoAdo = new Map<number, number>();
   const fizetendoTxt = ref("");
+  const newUtcaTxt = ref("");
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ISav {
@@ -61,6 +62,25 @@
       const adószám: number = item[0]; // key
       const összesAdó: number = item[1]; // value
       fizetendoTxt.value += `${adószám} ${összesAdó}\r\n`;
+    }
+
+    // Nem a megoldás része:
+    // Az új utca.txt állományhoz a newUtcaTxt tartalmának összeállítása
+    const elsoSor: string[] = [];
+    for (const item of adosavokStore.dataN.sort((a, b) =>
+      (a.sav as string).localeCompare(b.sav as string)
+    )) {
+      elsoSor.push(`${item.ado}`);
+    }
+    newUtcaTxt.value = elsoSor.join(" ") + "\r\n";
+    for (const e of dataN.value.sort((a, b) =>
+      `${a.utca} ${a.hazszam}`.localeCompare(`${b.utca} ${b.hazszam}`, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+    )) {
+      const aktAdosáv: string = (e.adosav as ISav).sav;
+      newUtcaTxt.value += `${e.adoszam} ${e.utca} ${e.hazszam} ${aktAdosáv} ${e.terulet}\r\n`;
     }
   });
 
@@ -115,6 +135,11 @@
             :content="fizetendoTxt"
             filename="fizetendo.txt"
             title="fizetendo.txt írása"
+          />
+          <TxtWritter
+            :content="newUtcaTxt"
+            filename="utca.txt"
+            title="Az új utca.txt írása a NoSQL adatbázis alapján"
           />
         </q-form>
         <!-- <p>fizetendoAdó: {{ fizetendoTxt }}</p> -->
