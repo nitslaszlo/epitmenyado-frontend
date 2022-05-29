@@ -26,8 +26,8 @@
         <q-form class="q-gutter-md" @reset="Reset()" @submit="Submit">
           <h4 class="text-center q-mt-lg q-mb-none">Edit tax band</h4>
           <q-input v-model="adosavokStore.data.sav" filled label="Sáv:" type="text" />
-          <q-input v-model="adosavokStore.data.ado" filled label="Adó:" type="number" />
-          <q-input v-model="adosavokStore.data.hatar" filled label="Határ:" type="number" />
+          <q-input v-model.number="adosavokStore.data.ado" filled label="Adó:" type="number" />
+          <q-input v-model.number="adosavokStore.data.hatar" filled label="Határ:" type="number" />
           <div class="row justify-center">
             <q-btn class="q-mr-md" color="green" label="Mentés" no-caps type="submit" />
             <q-btn class="q-mr-md" color="red" label="Mégsem" no-caps type="reset" />
