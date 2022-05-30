@@ -144,7 +144,7 @@
           <TxtWritter
             :content="newUtcaTxt"
             filename="utca.txt"
-            title="Az új utca.txt írása a NoSQL adatbázis alapján"
+            title="utca.txt írása a NoSQL adatbázisból"
           />
         </q-form>
         <!-- <p>fizetendoAdó: {{ fizetendoTxt }}</p> -->
