@@ -21,16 +21,22 @@
 
   function ado(sav: any, terulet: any): number {
     const adosav: any[] = adosavokStore.dataN.filter((x) => x.sav == sav.sav);
-    const ado: number = adosav[0].ado * terulet;
-    return ado < 10000 ? 0 : ado;
+    if (adosav[0]) {
+      const ado: number = adosav[0].ado * terulet;
+      return ado < 10000 ? 0 : ado;
+    } else {
+      return -1;
+    }
   }
 
   const { data, dataN, dataNfiltered } = storeToRefs(utcakStore);
 
+  // ha az input adószám megváltozik:
   watch(data.value, () => {
     dataNfiltered.value = dataN.value.filter((x) => x.adoszam == data.value.adoszam);
   });
 
+  // ha betöltődnek/változnak az utcák adatai:
   watch(dataN, () => {
     dataNfiltered.value = dataN.value.filter((x) => x.adoszam == data.value.adoszam);
     for (const item of dataN.value) {
@@ -67,9 +73,7 @@
     // Nem a megoldás része:
     // Az új utca.txt állományhoz a newUtcaTxt tartalmának összeállítása
     const elsoSor: string[] = [];
-    for (const item of adosavokStore.dataN.sort((a, b) =>
-      (a.sav as string).localeCompare(b.sav as string)
-    )) {
+    for (const item of adosavokStore.dataN.sort((a, b) => (a.ado as number) - (b.ado as number))) {
       elsoSor.push(`${item.ado}`);
     }
     newUtcaTxt.value = elsoSor.join(" ") + "\r\n";
@@ -90,12 +94,13 @@
     data.value.adoszam = 68396;
   });
 </script>
+
 <template>
   <q-page>
     <div class="row justify-center">
       <div v-if="utcakStore.dataN" class="col-12 col-sm-8 col-md-6 col-lg-4 q-gutter-md">
         <q-form class="q-gutter-md">
-          <h4 class="text-center q-mt-lg q-mb-none">A feladat megoldása</h4>
+          <h4 class="text-center q-mt-lg q-mb-none">Építményadó feladat megoldása</h4>
           <p>2. feladat. A mintában {{ dataN.length }} telek szerepel.</p>
           <p>3. feladat.</p>
           <q-input
@@ -117,9 +122,9 @@
             :key="index"
           >
             {{ item.sav }} sávba
-            {{ utcakStore.dataN.filter((x) => ((x.adosav! as ISav).sav == item.sav)).length }}
+            {{ utcakStore.dataN.filter((x) => ((x.adosav as ISav).sav == item.sav)).length }}
             telek esik, az adó
-            {{ utcakStore.dataN.filter((x) => ((x.adosav! as ISav).sav == item.sav)).reduce((p, c) => p + ado(c.adosav, c.terulet), 0) }}
+            {{ utcakStore.dataN.filter((x) => ((x.adosav as ISav).sav == item.sav)).reduce((p, c) => p + ado(c.adosav, c.terulet), 0) }}
             Ft.
             <br />
           </span>

@@ -53,9 +53,17 @@
   const links = ref([
     {
       icon: "mdi-github",
-      text: "GitHub repo",
+      text: "Frontend",
       name: "",
-      link: "https://github.com/nitslaszlo/jedlik-vite-quasar-template",
+      link: "https://github.com/nitslaszlo/epitmenyado-frontend",
+      disabled: false,
+      separator: false,
+    },
+    {
+      icon: "mdi-github",
+      text: "Backend",
+      name: "",
+      link: "https://github.com/nitslaszlo/epitmenyado-backend",
       disabled: false,
       separator: false,
     },
@@ -134,7 +142,7 @@
           <!-- links: -->
           <q-list>
             <template v-for="(linkItem, index) in links" :key="index">
-              <q-item clickable :href="linkItem.link">
+              <q-item clickable :href="linkItem.link" target="_blank">
                 <q-item-section avatar>
                   <q-icon :name="linkItem.icon" />
                 </q-item-section>

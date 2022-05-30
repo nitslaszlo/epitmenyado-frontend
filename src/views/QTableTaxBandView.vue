@@ -79,7 +79,7 @@
         </q-btn>
       </div>
       <!-- <p>Pagination object: {{ pagination }}</p> -->
-      <p>Selected array: {{ selected }}</p>
+      <!-- <p>Selected array: {{ selected }}</p> -->
       <!-- <div>Filter: "{{ pagination.filter }}"</div> -->
     </div>
   </q-page>
