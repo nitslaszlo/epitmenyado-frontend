@@ -72,11 +72,14 @@
 
     // Nem a megoldás része:
     // Az új utca.txt állományhoz a newUtcaTxt tartalmának összeállítása
+    // Az első sorban lévő adóösszegek:
     const elsoSor: string[] = [];
-    for (const item of adosavokStore.dataN.sort((a, b) => (a.ado as number) - (b.ado as number))) {
+    for (const item of adosavokStore.dataN.sort((a, b) => (b.ado as number) - (a.ado as number))) {
       elsoSor.push(`${item.ado}`);
     }
     newUtcaTxt.value = elsoSor.join(" ") + "\r\n";
+
+    // A 2. sortól az útcák és a házszámok
     for (const e of dataN.value.sort((a, b) =>
       `${a.utca} ${a.hazszam}`.localeCompare(`${b.utca} ${b.hazszam}`, undefined, {
         numeric: true,
