@@ -125,9 +125,13 @@
             :key="index"
           >
             {{ item.sav }} sávba
-            {{ utcakStore.dataN.filter((x) => ((x.adosav as ISav).sav == item.sav)).length }}
+            {{ utcakStore.dataN.filter((x) => (x.adosav as ISav).sav == item.sav).length }}
             telek esik, az adó
-            {{ utcakStore.dataN.filter((x) => ((x.adosav as ISav).sav == item.sav)).reduce((p, c) => p + ado(c.adosav, c.terulet), 0) }}
+            {{
+              utcakStore.dataN
+                .filter((x) => (x.adosav as ISav).sav == item.sav)
+                .reduce((p, c) => p + ado(c.adosav, c.terulet), 0)
+            }}
             Ft.
             <br />
           </span>

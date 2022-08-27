@@ -17,8 +17,7 @@ import "vue-global-api/onUnmounted";
 const app = createApp(App);
 
 // install all modules from `modules/*.ts`
-Object.values(import.meta.globEager("/src/modules/*.ts")).forEach((module) =>
-  module.install?.(app)
-);
+const modules = import.meta.glob<any>("/src/modules/*.ts", { eager: true });
+Object.values(modules).forEach((module) => module.install?.(app));
 
 app.mount("#app");
