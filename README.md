@@ -19,9 +19,6 @@ As an asynchronous event-driven JavaScript runtime, [Node.js](https://nodejs.org
 ## Vue.js 3 SFC and "script setup"
 ["script setup"](https://vuejs.org/api/sfc-script-setup.html) is a compile-time syntactic sugar for using Composition API inside Single File Components (SFCs). It is the recommended syntax if you are using both SFCs and Composition API.
 
-## vue-global-api
-Use Vue Composition API globally instead of import APIs from vue in every file. [GitHub](https://github.com/antfu/vue-global-api)
-
 ## TypeScript
 [TypeScript](https://www.typescriptlang.org/) is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
 

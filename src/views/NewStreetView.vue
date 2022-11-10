@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { onMounted } from "vue";
   import { useUtcakStore } from "../store/utcakStore";
   import { useAdosavokStore } from "../store/adosavokStore";
   import router from "src/router";
