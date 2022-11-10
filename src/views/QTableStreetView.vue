@@ -1,14 +1,18 @@
 <script setup lang="ts">
-  import { onMounted, watch } from "vue";
+  import { onMounted, ref, watch } from "vue";
   import { useUtcakStore } from "../store/utcakStore";
+  import { useAdosavokStore } from "../store/adosavokStore";
   import { storeToRefs } from "pinia";
   import router from "src/router";
   import { useUsersStore } from "../store/usersStore";
 
   const utcakStore = useUtcakStore();
   const usersStore = useUsersStore();
+  const adosavokStore = useAdosavokStore();
 
   const { isLoading, dataN, pagination, selected } = storeToRefs(utcakStore);
+
+  const showEditDialog = ref(false);
 
   watch(isLoading, () => {
     onRequest({
@@ -32,7 +36,8 @@
   function editRecord(): void {
     utcakStore.data = selected.value[0];
     utcakStore.getById();
-    router.push("/editStreet");
+    // router.push("/editStreet");
+    showEditDialog.value = true;
   }
 
   function clearSelection(): void {
@@ -82,6 +87,22 @@
       pagination: pagination.value,
     });
   });
+
+  function Submit() {
+    utcakStore.editById();
+  }
+
+  function Reset() {
+    // router.push("/qtablestreet");
+    onRequest({
+      pagination: pagination.value,
+    });
+    showEditDialog.value = false;
+  }
+
+  function BeforeShowDialog() {
+    adosavokStore.getAll();
+  }
 </script>
 
 <template>
@@ -139,6 +160,39 @@
       <!-- <p>Selected array: {{ selected }}</p> -->
       <!-- <div>Filter: "{{ pagination.filter }}"</div> -->
     </div>
+    <q-dialog v-model="showEditDialog" persistent @before-show="BeforeShowDialog()">
+      <q-card class="q-pa-md" style="width: 60vw; min-width: 300px">
+        <q-form class="q-mx-md" @reset="Reset()" @submit="Submit">
+          <div class="row">
+            <div v-if="utcakStore.data" class="col-12 q-gutter-md">
+              <h4 class="text-center q-mt-lg q-mb-none">Edit document</h4>
+              <q-select
+                v-model="utcakStore.data.adosav"
+                clearable
+                emit-value
+                filled
+                label="Adósáv:"
+                map-options
+                option-label="sav"
+                option-value="_id"
+                :options="adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))"
+              />
+              <q-input v-model="utcakStore.data.adoszam" filled label="Adószám:" type="text" />
+              <q-input v-model="utcakStore.data.utca" filled label="Utca:" type="text" />
+              <q-input v-model="utcakStore.data.hazszam" filled label="Házszám:" type="text" />
+              <q-input v-model="utcakStore.data.terulet" filled label="Terület:" type="number" />
+              <div class="row justify-center">
+                <q-btn class="q-mr-md" color="green" label="Mentés" no-caps type="submit" />
+                <q-btn class="q-mr-md" color="red" label="Mégsem" no-caps type="reset" />
+              </div>
+              <!-- <p>Actual: {{ utcakStore.data }}</p> -->
+              <!-- <p>Old: {{ utcakStore.dataOld }}</p> -->
+              <!-- <p>Selected: {{ utcakStore.selected }}</p> -->
+            </div>
+          </div>
+        </q-form>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
