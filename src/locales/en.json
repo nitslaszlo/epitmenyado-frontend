@@ -8,5 +8,10 @@
   "noUser": "is not logged in",
   "startPage": "Start page",
   "links": "Links",
-  "actualBreakpoint": "Actual breakpoint"
+  "editStreets": "Edit streets",
+  "editTaxBands": "Edit tax bands",
+  "newDocument": "New document",
+  "editDocument": "Edit document",
+  "streets": "Streets",
+  "taxBands": "Tax bands"
 }

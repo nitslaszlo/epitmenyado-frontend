@@ -126,7 +126,7 @@
               <q-item-section avatar>
                 <q-icon name="mdi-table" />
               </q-item-section>
-              <q-item-section>Edit streets</q-item-section>
+              <q-item-section>{{ t("editStreets") }}</q-item-section>
             </q-item>
             <q-item
               clickable
@@ -136,7 +136,7 @@
               <q-item-section avatar>
                 <q-icon name="mdi-table" />
               </q-item-section>
-              <q-item-section>Edit tax bands</q-item-section>
+              <q-item-section>{{ t("editTaxBands") }}</q-item-section>
             </q-item>
             <q-separator />
           </q-list>

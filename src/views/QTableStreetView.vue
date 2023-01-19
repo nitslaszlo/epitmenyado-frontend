@@ -3,7 +3,6 @@
   import { useUtcakStore } from "../store/utcakStore";
   import { useAdosavokStore } from "../store/adosavokStore";
   import { storeToRefs } from "pinia";
-  import router from "src/router";
   import { useUsersStore } from "../store/usersStore";
 
   const utcakStore = useUtcakStore();
@@ -12,7 +11,8 @@
 
   const { isLoading, dataN, pagination, selected } = storeToRefs(utcakStore);
 
-  const showEditDialog = ref(false);
+  const showDialog = ref(false);
+  const isEditDocument = ref(false);
 
   watch(isLoading, () => {
     onRequest({
@@ -26,7 +26,8 @@
 
   function newRecord(): void {
     utcakStore.data = {};
-    router.push("/newStreet");
+    isEditDocument.value = false;
+    showDialog.value = true;
   }
 
   function filterChanged(): void {
@@ -36,8 +37,8 @@
   function editRecord(): void {
     utcakStore.data = selected.value[0];
     utcakStore.getById();
-    // router.push("/editStreet");
-    showEditDialog.value = true;
+    isEditDocument.value = true;
+    showDialog.value = true;
   }
 
   function clearSelection(): void {
@@ -89,15 +90,19 @@
   });
 
   function Submit() {
-    utcakStore.editById();
+    if (isEditDocument.value) utcakStore.editById();
+    else utcakStore.create();
   }
 
   function Reset() {
-    // router.push("/qtablestreet");
+    utcakStore.data = { ...utcakStore.dataOld };
+  }
+
+  function Close() {
     onRequest({
       pagination: pagination.value,
     });
-    showEditDialog.value = false;
+    showDialog.value = false;
   }
 
   function BeforeShowDialog() {
@@ -118,7 +123,7 @@
         row-key="_id"
         :rows="dataN"
         selection="multiple"
-        title="Streets"
+        :title="$t('streets')"
         wrap-cells
         @request="onRequest"
       >
@@ -147,10 +152,10 @@
           no-caps
           @click="newRecord"
         >
-          New record
+          {{ $t("newDocument") }}
         </q-btn>
         <q-btn v-show="selected.length == 1" color="blue" no-caps @click="editRecord">
-          Edit record
+          {{ $t("editDocument") }}
         </q-btn>
         <q-btn v-show="selected.length != 0" color="red" no-caps @click="deleteRecord">
           {{ selected.length > 1 ? "Delete selected records" : "Delete selected record" }}
@@ -160,12 +165,23 @@
       <!-- <p>Selected array: {{ selected }}</p> -->
       <!-- <div>Filter: "{{ pagination.filter }}"</div> -->
     </div>
-    <q-dialog v-model="showEditDialog" persistent @before-show="BeforeShowDialog()">
+
+    <!-- Edit and New document's dialog -->
+    <q-dialog v-model="showDialog" persistent @before-show="BeforeShowDialog()">
       <q-card class="q-pa-md" style="width: 60vw; min-width: 300px">
         <q-form class="q-mx-md" @reset="Reset()" @submit="Submit">
           <div class="row">
             <div v-if="utcakStore.data" class="col-12 q-gutter-md">
-              <h4 class="text-center q-mt-lg q-mb-none">Edit document</h4>
+              <h4 class="text-center q-mt-lg q-mb-none">
+                {{ `${isEditDocument ? "Edit" : "New"} document` }}
+              </h4>
+              <q-input
+                v-if="!isEditDocument"
+                v-model.number="utcakStore.data._id"
+                filled
+                label="_id:"
+                type="number"
+              />
               <q-select
                 v-model="utcakStore.data.adosav"
                 clearable
@@ -183,7 +199,8 @@
               <q-input v-model="utcakStore.data.terulet" filled label="Terület:" type="number" />
               <div class="row justify-center">
                 <q-btn class="q-mr-md" color="green" label="Mentés" no-caps type="submit" />
-                <q-btn class="q-mr-md" color="red" label="Mégsem" no-caps type="reset" />
+                <q-btn class="q-mr-md" color="red" label="Visszaállítás" no-caps type="reset" />
+                <q-btn class="q-mr-md" color="blue" label="Bezár" no-caps @click="Close()" />
               </div>
               <!-- <p>Actual: {{ utcakStore.data }}</p> -->
               <!-- <p>Old: {{ utcakStore.dataOld }}</p> -->

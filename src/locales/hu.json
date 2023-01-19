@@ -8,5 +8,10 @@
   "noUser": "nincs bejelentkezve",
   "startPage": "Kezdőlap",
   "links": "Hivatkozások",
-  "actualBreakpoint": "Aktuális töréspont"
+  "editStreets": "Utcák szerk.",
+  "editTaxBands": "Adósávok szerk.",
+  "newDocument": "Új dokumentum",
+  "editDocument": "Dokumentum szerkesztése",
+  "streets": "Utcák",
+  "taxBands": "Adósávok"
 }
