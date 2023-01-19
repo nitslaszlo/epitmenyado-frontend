@@ -4,10 +4,8 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "christian-kohler.path-intellisense",
-        "rangav.vscode-thunder-client",
         "antfu.iconify",
         "eg2.vscode-npm-script",
         "formulahendry.auto-rename-tag",
-        "Vue.vscode-typescript-vue-plugin"
     ]
 }

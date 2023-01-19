@@ -26,7 +26,7 @@
   "git.enableSmartCommit": true,
   "git.confirmSync": false,
   "git.autofetch": true,
-  "git.autofetchPeriod": 180,
+  "git.autofetchPeriod": 60,
   "files.autoSave": "afterDelay",
   "files.eol": "\r\n",
   "files.exclude": {
