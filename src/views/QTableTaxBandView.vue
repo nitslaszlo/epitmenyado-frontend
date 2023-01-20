@@ -3,14 +3,14 @@
   import { useAdosavokStore } from "../store/adosavokStore";
   import { storeToRefs } from "pinia";
   import { useUsersStore } from "../store/usersStore";
+  import { QTableColumn } from "quasar";
 
   const adosavokStore = useAdosavokStore();
   const usersStore = useUsersStore();
+  const { isLoading, dataN, selected } = storeToRefs(adosavokStore);
 
   const showDialog = ref(false);
   const isEditDocument = ref(false);
-
-  const { isLoading, dataN, selected } = storeToRefs(adosavokStore);
 
   watch(isLoading, () => {
     adosavokStore.getAll();
@@ -37,7 +37,7 @@
     selected.value = [];
   }
 
-  const columns: any[] = [
+  const columns: QTableColumn[] = [
     { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
     { name: "sav", label: "sáv", field: "sav", align: "left", sortable: true },
     { name: "ado", label: "adó", field: "ado", align: "left", sortable: true },

@@ -4,6 +4,7 @@
   import { useAdosavokStore } from "../store/adosavokStore";
   import { storeToRefs } from "pinia";
   import { useUsersStore } from "../store/usersStore";
+  import { QTableColumn } from "quasar";
 
   const utcakStore = useUtcakStore();
   const usersStore = useUsersStore();
@@ -45,7 +46,7 @@
     selected.value = [];
   }
 
-  const columns: any[] = [
+  const columns: QTableColumn[] = [
     { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
     { name: "adoszam", label: "Adószám", field: "adoszam", align: "left", sortable: true },
     {
