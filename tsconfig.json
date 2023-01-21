@@ -13,30 +13,13 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "lib": [
-      "esnext",
-      "dom"
-    ],
-    "types": [
-      "node",
-      "vite/client",
-      "@intlify/vite-plugin-vue-i18n/client"
-    ],
+    "lib": ["esnext", "dom"],
+    "types": ["node", "vite/client", "@intlify/unplugin-vue-i18n/messages"],
     "paths": {
-      "src/*": [
-        "src/*"
-      ],
-      "/src/*": [
-        "src/*"
-      ],
-      "~/*": [
-        "src/*"
-      ]
+      "src/*": ["src/*"],
+      "/src/*": ["src/*"],
+      "~/*": ["src/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.vue"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"]
 }

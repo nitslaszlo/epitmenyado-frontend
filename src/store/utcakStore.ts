@@ -1,7 +1,6 @@
 import $axios from "./axios.instance";
 import { defineStore } from "pinia";
-import { Notify, Loading } from "quasar";
-import router from "src/router";
+import { Notify } from "quasar";
 
 Notify.setDefaults({
   position: "bottom",
@@ -44,6 +43,7 @@ interface IState {
   dataOld: IFields; // temporary object for patch method (store data here before edit)
   selected: Array<IFields>;
   isLoading: boolean;
+  reloadCounter: number;
   pagination: IPagination;
 }
 
@@ -56,6 +56,7 @@ export const useUtcakStore = defineStore({
     dataOld: {},
     selected: [],
     isLoading: false,
+    reloadCounter: 0,
     pagination: {
       sortBy: "utca",
       descending: false,
@@ -66,18 +67,18 @@ export const useUtcakStore = defineStore({
   getters: {},
   actions: {
     async getAll(): Promise<void> {
-      Loading.show();
+      this.isLoading = true;
       this.dataN = [];
       $axios
         .get("api/utcak")
         .then((res) => {
-          Loading.hide();
+          this.isLoading = false;
           if (res && res.data) {
             this.dataN = res.data;
           }
         })
         .catch((error) => {
-          Loading.hide();
+          this.isLoading = false;
           Notify.create({
             message: `Error (${error.response.data.status}) while get all: ${error.response.data.message}`,
             color: "negative",
@@ -87,18 +88,18 @@ export const useUtcakStore = defineStore({
 
     async getById(): Promise<void> {
       if (this.data && this.data._id) {
-        Loading.show();
+        this.isLoading = true;
         $axios
           .get(`api/utcak/${this.data._id}`)
           .then((res) => {
-            Loading.hide();
+            this.isLoading = false;
             if (res && res.data) {
               this.data = res.data;
               Object.assign(this.dataOld, this.data);
             }
           })
           .catch((error) => {
-            Loading.hide();
+            this.isLoading = false;
             Notify.create({
               message: `Error while get by id: ${error.message}`,
               color: "negative",
@@ -108,7 +109,7 @@ export const useUtcakStore = defineStore({
     },
 
     async fetchPaginatedStreets(params: IPaginatedParams): Promise<void> {
-      Loading.show();
+      this.isLoading = true;
       $axios
         .get(
           `api/utcak/${params.offset}/${params.limit}/${params.order}/${params.sort}/${params.keyword}`
@@ -119,10 +120,10 @@ export const useUtcakStore = defineStore({
             // this.numberOfStreets = res.data.count; // ez ide majd nem kell
             this.pagination.rowsNumber = res.data.count;
           }
-          Loading.hide();
+          this.isLoading = false;
         })
         .catch((error) => {
-          Loading.hide();
+          this.isLoading = false;
           Notify.create({
             message: `Error (${error.response.data.status}) while fetch paginated: ${error.response.data.message}`,
             color: "negative",
@@ -143,69 +144,65 @@ export const useUtcakStore = defineStore({
             message: "Nothing changed!",
             color: "negative",
           });
-          this.isLoading = false;
-          process.exit(0);
-        }
-        Loading.show();
-        this.isLoading = true;
-        $axios
-          .patch(`api/utcak/${this.data._id}`, diff)
-          .then((res) => {
-            Loading.hide();
-            if (res && res.data) {
+        } else {
+          this.isLoading = true;
+          $axios
+            .patch(`api/utcak/${this.data._id}`, diff)
+            .then((res) => {
               this.isLoading = false;
-              this.selected[0] = res.data;
+              if (res && res.data) {
+                this.dataOld = { ...this.data };
+                this.reloadCounter++; // reload paginated data
+                // this.selected[0] = res.data;
+                Notify.create({
+                  message: `Document with id=${res.data._id} has been edited successfully!`,
+                  color: "positive",
+                });
+                // router.push("/qtablestreet");
+              }
+            })
+            .catch((error) => {
+              this.isLoading = false;
               Notify.create({
-                message: `Document with id=${res.data._id} has been edited successfully!`,
-                color: "positive",
+                message: `Error (${error.response.data.status}) while edit by id: ${error.response.data.message}`,
+                color: "negative",
               });
-              router.push("/qtablestreet");
-            }
-          })
-          .catch((error) => {
-            Loading.hide();
-            Notify.create({
-              message: `Error (${error.response.data.status}) while edit by id: ${error.response.data.message}`,
-              color: "negative",
             });
-          });
+        }
       }
     },
 
     async deleteById(): Promise<void> {
-      Loading.show();
       this.isLoading = true;
-      if (this.selected.length) {
+      while (this.selected.length) {
         const id_for_delete = this.selected.pop()?._id;
         await $axios
           .delete(`api/utcak/${id_for_delete}`)
           .then(() => {
-            Loading.hide();
             Notify.create({
               message: `Document with id=${id_for_delete} has been deleted successfully!`,
               color: "positive",
             });
-            if (this.selected.length) this.deleteById();
-            else this.isLoading = false;
           })
           .catch((error) => {
-            Loading.hide();
             Notify.create({
               message: `Error (${error.response.data.status}) while delete by id: ${error.response.data.message}`,
               color: "negative",
             });
           });
       }
+      this.isLoading = false;
+      this.reloadCounter++;
     },
 
     async create(): Promise<void> {
       if (this.data) {
-        Loading.show();
+        this.isLoading = true;
         // delete this.data.category;
         $axios
           .post("api/utcak", this.data)
           .then((res) => {
-            Loading.hide();
+            this.isLoading = false;
             if (res && res.data) {
               // this.data = {};
               // this.getAll();
@@ -213,12 +210,12 @@ export const useUtcakStore = defineStore({
                 message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",
               });
-              router.push("/qtablestreet");
+              // router.push("/qtablestreet");
               // router.push({ name: "page_name" });
             }
           })
           .catch((error) => {
-            Loading.hide();
+            this.isLoading = false;
             Notify.create({
               message: `Error (${error.response.data.status}) while create: ${error.response.data.message}`,
               color: "negative",

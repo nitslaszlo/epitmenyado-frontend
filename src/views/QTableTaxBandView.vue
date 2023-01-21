@@ -1,20 +1,14 @@
 <script setup lang="ts">
-  import { onMounted, watch, ref } from "vue";
+  import { onMounted, ref } from "vue";
   import { useAdosavokStore } from "../store/adosavokStore";
-  import { storeToRefs } from "pinia";
   import { useUsersStore } from "../store/usersStore";
   import { QTableColumn } from "quasar";
 
   const adosavokStore = useAdosavokStore();
   const usersStore = useUsersStore();
-  const { isLoading, dataN, selected } = storeToRefs(adosavokStore);
 
   const showDialog = ref(false);
   const isEditDocument = ref(false);
-
-  watch(isLoading, () => {
-    adosavokStore.getAll();
-  });
 
   function deleteRecord(): void {
     adosavokStore.deleteById();
@@ -27,14 +21,14 @@
   }
 
   function editRecord(): void {
-    adosavokStore.data = selected.value[0];
+    adosavokStore.data = adosavokStore.selected[0];
     adosavokStore.getById();
     isEditDocument.value = true;
     showDialog.value = true;
   }
 
   function clearSelection(): void {
-    selected.value = [];
+    adosavokStore.selected = [];
   }
 
   const columns: QTableColumn[] = [
@@ -48,17 +42,17 @@
     adosavokStore.getAll();
   });
 
-  function Close() {
-    adosavokStore.getAll();
+  function CloseDialog() {
+    // adosavokStore.getAll();
     showDialog.value = false;
   }
 
-  function Submit() {
+  function SubmitDialog() {
     if (isEditDocument.value) adosavokStore.editById();
     else adosavokStore.create();
   }
 
-  function Reset() {
+  function ResetDialog() {
     adosavokStore.data = { ...adosavokStore.dataOld };
   }
 </script>
@@ -67,44 +61,54 @@
   <q-page>
     <div class="q-pa-md">
       <q-table
-        v-model:selected="selected"
+        v-model:selected="adosavokStore.selected"
         binary-state-sort
         :columns="columns"
         dense
+        :pagination="{ rowsPerPage: 10 }"
         row-key="_id"
-        :rows="dataN"
+        :rows="adosavokStore.dataN"
         selection="multiple"
         :title="$t('taxBands')"
         wrap-cells
       ></q-table>
       <!-- Buttons:  -->
       <div class="row justify-center q-ma-sm q-gutter-sm">
-        <q-btn v-show="selected.length != 0" color="orange" no-caps @click="clearSelection">
-          {{ selected.length > 1 ? "Clear selections" : "Clear selection" }}
+        <q-btn
+          v-show="adosavokStore.selected.length != 0"
+          color="orange"
+          no-caps
+          @click="clearSelection"
+        >
+          {{ adosavokStore.selected.length > 1 ? "Clear selections" : "Clear selection" }}
         </q-btn>
         <q-btn
-          v-show="usersStore.loggedUser && selected.length == 0"
+          v-show="usersStore.loggedUser && adosavokStore.selected.length == 0"
           color="green"
           no-caps
           @click="newRecord"
         >
           {{ $t("newDocument") }}
         </q-btn>
-        <q-btn v-show="selected.length == 1" color="blue" no-caps @click="editRecord">
+        <q-btn v-show="adosavokStore.selected.length == 1" color="blue" no-caps @click="editRecord">
           {{ $t("editDocument") }}
         </q-btn>
-        <q-btn v-show="selected.length != 0" color="red" no-caps @click="deleteRecord">
-          {{ selected.length > 1 ? "Delete selected records" : "Delete selected record" }}
+        <q-btn
+          v-show="adosavokStore.selected.length != 0"
+          color="red"
+          no-caps
+          @click="deleteRecord"
+        >
+          {{
+            adosavokStore.selected.length > 1 ? "Delete selected records" : "Delete selected record"
+          }}
         </q-btn>
       </div>
-      <!-- <p>Pagination object: {{ pagination }}</p> -->
-      <!-- <p>Selected array: {{ selected }}</p> -->
-      <!-- <div>Filter: "{{ pagination.filter }}"</div> -->
     </div>
     <!-- Edit and New document's dialog -->
     <q-dialog v-model="showDialog" persistent>
       <q-card class="q-pa-md" style="width: 60vw; min-width: 300px">
-        <q-form class="q-mx-md" @reset="Reset()" @submit="Submit">
+        <q-form class="q-mx-md" @reset="ResetDialog()" @submit="SubmitDialog">
           <div class="row">
             <div v-if="adosavokStore.data" class="col-12 q-gutter-md">
               <h4 class="text-center q-mt-lg q-mb-none">
@@ -128,7 +132,7 @@
               <div class="row justify-center">
                 <q-btn class="q-mr-md" color="green" label="Mentés" no-caps type="submit" />
                 <q-btn class="q-mr-md" color="red" label="Visszaállítás" no-caps type="reset" />
-                <q-btn class="q-mr-md" color="red" label="Bezár" no-caps @click="Close()" />
+                <q-btn class="q-mr-md" color="red" label="Bezár" no-caps @click="CloseDialog()" />
               </div>
               <p>Actual: {{ adosavokStore.data }}</p>
             </div>

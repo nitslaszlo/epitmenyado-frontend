@@ -1,23 +1,21 @@
 <script setup lang="ts">
-  import { onMounted, ref, watch } from "vue";
+  import { onMounted, watch } from "vue";
+  import { useAppStore } from "../store/appStore";
   import { useUtcakStore } from "../store/utcakStore";
-  import { useAdosavokStore } from "../store/adosavokStore";
-  import { storeToRefs } from "pinia";
   import { useUsersStore } from "../store/usersStore";
+  import { storeToRefs } from "pinia";
   import { QTableColumn } from "quasar";
+  import StreetDialog from "../components/StreetDialog.vue";
 
+  const appStore = useAppStore();
   const utcakStore = useUtcakStore();
   const usersStore = useUsersStore();
-  const adosavokStore = useAdosavokStore();
 
-  const { isLoading, dataN, pagination, selected } = storeToRefs(utcakStore);
+  const { reloadCounter } = storeToRefs(utcakStore); // for watch changes and reload data
 
-  const showDialog = ref(false);
-  const isEditDocument = ref(false);
-
-  watch(isLoading, () => {
+  watch(reloadCounter, () => {
     onRequest({
-      pagination: pagination.value,
+      pagination: utcakStore.pagination,
     });
   });
 
@@ -27,23 +25,23 @@
 
   function newRecord(): void {
     utcakStore.data = {};
-    isEditDocument.value = false;
-    showDialog.value = true;
+    appStore.isEditDocument = false;
+    appStore.showDialog = true;
   }
 
   function filterChanged(): void {
-    selected.value = [];
+    utcakStore.selected = [];
   }
 
   function editRecord(): void {
-    utcakStore.data = selected.value[0];
+    utcakStore.data = utcakStore.selected[0];
     utcakStore.getById();
-    isEditDocument.value = true;
-    showDialog.value = true;
+    appStore.isEditDocument = true;
+    appStore.showDialog = true;
   }
 
   function clearSelection(): void {
-    selected.value = [];
+    utcakStore.selected = [];
   }
 
   const columns: QTableColumn[] = [
@@ -78,51 +76,32 @@
     });
 
     // don't forget to update local pagination object
-    pagination.value.page = page;
-    pagination.value.rowsPerPage = rowsPerPage;
-    pagination.value.sortBy = sortBy;
-    pagination.value.descending = descending;
+    utcakStore.pagination.page = page;
+    utcakStore.pagination.rowsPerPage = rowsPerPage;
+    utcakStore.pagination.sortBy = sortBy;
+    utcakStore.pagination.descending = descending;
   }
 
   onMounted(() => {
     onRequest({
-      pagination: pagination.value,
+      pagination: utcakStore.pagination,
     });
   });
-
-  function Submit() {
-    if (isEditDocument.value) utcakStore.editById();
-    else utcakStore.create();
-  }
-
-  function Reset() {
-    utcakStore.data = { ...utcakStore.dataOld };
-  }
-
-  function Close() {
-    onRequest({
-      pagination: pagination.value,
-    });
-    showDialog.value = false;
-  }
-
-  function BeforeShowDialog() {
-    adosavokStore.getAll();
-  }
 </script>
 
 <template>
   <q-page>
     <div class="q-pa-md">
       <q-table
-        v-model:pagination="pagination"
-        v-model:selected="selected"
+        v-model:pagination="utcakStore.pagination"
+        v-model:selected="utcakStore.selected"
         binary-state-sort
         :columns="columns"
         dense
-        :filter="pagination.filter"
+        :filter="utcakStore.pagination.filter"
+        :loading="utcakStore.isLoading"
         row-key="_id"
-        :rows="dataN"
+        :rows="utcakStore.dataN"
         selection="multiple"
         :title="$t('streets')"
         wrap-cells
@@ -130,7 +109,7 @@
       >
         <template #top-right>
           <q-input
-            v-model="pagination.filter"
+            v-model="utcakStore.pagination.filter"
             debounce="300"
             dense
             placeholder="Search"
@@ -144,22 +123,29 @@
       </q-table>
       <!-- Buttons:  -->
       <div class="row justify-center q-ma-sm q-gutter-sm">
-        <q-btn v-show="selected.length != 0" color="orange" no-caps @click="clearSelection">
-          {{ selected.length > 1 ? "Clear selections" : "Clear selection" }}
+        <q-btn
+          v-show="utcakStore.selected.length != 0"
+          color="orange"
+          no-caps
+          @click="clearSelection"
+        >
+          {{ utcakStore.selected.length > 1 ? "Clear selections" : "Clear selection" }}
         </q-btn>
         <q-btn
-          v-show="usersStore.loggedUser && selected.length == 0"
+          v-show="usersStore.loggedUser && utcakStore.selected.length == 0"
           color="green"
           no-caps
-          @click="newRecord"
+          @click="newRecord()"
         >
           {{ $t("newDocument") }}
         </q-btn>
-        <q-btn v-show="selected.length == 1" color="blue" no-caps @click="editRecord">
+        <q-btn v-show="utcakStore.selected.length == 1" color="blue" no-caps @click="editRecord()">
           {{ $t("editDocument") }}
         </q-btn>
-        <q-btn v-show="selected.length != 0" color="red" no-caps @click="deleteRecord">
-          {{ selected.length > 1 ? "Delete selected records" : "Delete selected record" }}
+        <q-btn v-show="utcakStore.selected.length != 0" color="red" no-caps @click="deleteRecord()">
+          {{
+            utcakStore.selected.length > 1 ? "Delete selected records" : "Delete selected record"
+          }}
         </q-btn>
       </div>
       <!-- <p>Pagination object: {{ pagination }}</p> -->
@@ -167,50 +153,9 @@
       <!-- <div>Filter: "{{ pagination.filter }}"</div> -->
     </div>
 
-    <!-- Edit and New document's dialog -->
-    <q-dialog v-model="showDialog" persistent @before-show="BeforeShowDialog()">
-      <q-card class="q-pa-md" style="width: 60vw; min-width: 300px">
-        <q-form class="q-mx-md" @reset="Reset()" @submit="Submit">
-          <div class="row">
-            <div v-if="utcakStore.data" class="col-12 q-gutter-md">
-              <h4 class="text-center q-mt-lg q-mb-none">
-                {{ `${isEditDocument ? "Edit" : "New"} document` }}
-              </h4>
-              <q-input
-                v-if="!isEditDocument"
-                v-model.number="utcakStore.data._id"
-                filled
-                label="_id:"
-                type="number"
-              />
-              <q-select
-                v-model="utcakStore.data.adosav"
-                clearable
-                emit-value
-                filled
-                label="Adósáv:"
-                map-options
-                option-label="sav"
-                option-value="_id"
-                :options="adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))"
-              />
-              <q-input v-model="utcakStore.data.adoszam" filled label="Adószám:" type="text" />
-              <q-input v-model="utcakStore.data.utca" filled label="Utca:" type="text" />
-              <q-input v-model="utcakStore.data.hazszam" filled label="Házszám:" type="text" />
-              <q-input v-model="utcakStore.data.terulet" filled label="Terület:" type="number" />
-              <div class="row justify-center">
-                <q-btn class="q-mr-md" color="green" label="Mentés" no-caps type="submit" />
-                <q-btn class="q-mr-md" color="red" label="Visszaállítás" no-caps type="reset" />
-                <q-btn class="q-mr-md" color="blue" label="Bezár" no-caps @click="Close()" />
-              </div>
-              <!-- <p>Actual: {{ utcakStore.data }}</p> -->
-              <!-- <p>Old: {{ utcakStore.dataOld }}</p> -->
-              <!-- <p>Selected: {{ utcakStore.selected }}</p> -->
-            </div>
-          </div>
-        </q-form>
-      </q-card>
-    </q-dialog>
+    <!-- Edit and New street document's dialog -->
+    <StreetDialog />
+    <!-- Edit and New street document's dialog -->
   </q-page>
 </template>
 

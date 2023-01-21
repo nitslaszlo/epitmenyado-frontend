@@ -1,7 +1,7 @@
 import $axios from "./axios.instance";
 import { defineStore } from "pinia";
 import { Notify, Loading } from "quasar";
-import router from "src/router";
+// import router from "src/router";
 
 Notify.setDefaults({
   position: "bottom",
@@ -97,13 +97,14 @@ export const useAdosavokStore = defineStore({
           .then((res) => {
             Loading.hide();
             if (res && res.data) {
-              this.data = {};
-              this.getAll();
+              // update dataN too:
+              const editedItemIndex = this.dataN.findIndex((x) => x._id == this.data._id);
+              this.dataN[editedItemIndex] = { ...this.data };
+              this.dataOld = { ...this.data };
               Notify.create({
                 message: `Document with id=${res.data._id} has been edited successfully!`,
                 color: "positive",
               });
-              router.push("/qtabletaxband");
             }
           })
           .catch((error) => {
@@ -123,14 +124,14 @@ export const useAdosavokStore = defineStore({
         await $axios
           .delete(`api/adosavok/${id_for_delete}`)
           .then(() => {
-            Loading.hide();
+            // Loading.hide();
             Notify.create({
               message: `Document with id=${id_for_delete} has been deleted successfully!`,
               color: "positive",
             });
           })
           .catch((error) => {
-            Loading.hide();
+            // Loading.hide();
             Notify.create({
               message: `Error (${error.response.data.status}) while delete by id: ${error.response.data.message}`,
               color: "negative",
@@ -138,24 +139,23 @@ export const useAdosavokStore = defineStore({
           });
         if (this.selected.length) this.deleteById();
         else this.isLoading = false;
+        Loading.hide();
       }
     },
     async create(): Promise<void> {
       if (this.data) {
         Loading.show();
-        // delete this.data.category;
         $axios
           .post("api/adosavok", this.data)
           .then((res) => {
             Loading.hide();
             if (res && res.data) {
-              // this.data = {};
-              this.getAll();
+              // update dataN too:
+              this.dataN.push({ ...this.data });
               Notify.create({
                 message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",
               });
-              router.push("/qtabletaxband");
             }
           })
           .catch((error) => {
