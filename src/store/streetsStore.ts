@@ -1,74 +1,105 @@
 import $axios from "./axios.instance";
 import { defineStore } from "pinia";
-import { Notify, Loading } from "quasar";
-// import router from "src/router";
+import { Notify } from "quasar";
 
 Notify.setDefaults({
   position: "bottom",
   textColor: "white",
   timeout: 3000,
   actions: [{ icon: "close", color: "white" }],
+  progress: true,
 });
+
+interface IPaginatedParams {
+  offset: number;
+  limit: string;
+  order: string;
+  sort: string;
+  keyword?: string;
+}
 
 interface IFields {
   _id?: number; // PK
-  sav?: string;
-  ado?: number;
-  hatar?: number;
+  adosav?: number | { sav: string; ado: number; hatar: number }; // FK
+  adoszam?: number;
+  utca?: string;
+  hazszam?: string;
+  terulet?: number;
+}
+
+interface IPagination {
+  sortBy?: string;
+  descending?: false;
+  page?: number;
+  rowsPerPage?: number;
+  rowsNumber?: number;
+  filter?: string;
 }
 
 interface IState {
   dataN: Array<IFields>; // store documents (records) after get method(s)
-  data: IFields; // temporary object for create, edit and delete method
+  dataNfiltered: Array<IFields>;
+  data: IFields; // temporary object for create, edit and delete methods
   dataOld: IFields; // temporary object for patch method (store data here before edit)
   selected: Array<IFields>;
   isLoading: boolean;
+  reloadCounter: number;
+  pagination: IPagination;
 }
 
-export const useAdosavokStore = defineStore({
-  id: "adosavokStore",
+export const useStreetsStore = defineStore({
+  id: "streetsStore",
   state: (): IState => ({
     dataN: [],
+    dataNfiltered: [],
     data: {},
     dataOld: {},
     selected: [],
     isLoading: false,
+    reloadCounter: 0,
+    pagination: {
+      sortBy: "utca",
+      descending: false,
+      rowsPerPage: 10,
+      filter: "",
+    },
   }),
   getters: {},
   actions: {
     async getAll(): Promise<void> {
-      Loading.show();
+      this.isLoading = true;
       this.dataN = [];
       $axios
-        .get("api/adosavok")
+        .get("api/utcak")
         .then((res) => {
-          Loading.hide();
+          this.isLoading = false;
           if (res && res.data) {
             this.dataN = res.data;
           }
         })
         .catch((error) => {
-          Loading.hide();
+          this.isLoading = false;
           Notify.create({
             message: `Error (${error.response.data.status}) while get all: ${error.response.data.message}`,
             color: "negative",
           });
         });
     },
+
     async getById(): Promise<void> {
       if (this.data && this.data._id) {
-        Loading.show();
+        this.isLoading = true;
         $axios
-          .get(`api/adosavok/${this.data._id}`)
+          .get(`api/utcak/${this.data._id}`)
           .then((res) => {
-            Loading.hide();
+            this.isLoading = false;
             if (res && res.data) {
               this.data = res.data;
               Object.assign(this.dataOld, this.data);
             }
           })
           .catch((error) => {
-            Loading.hide();
+            this.isLoading = false;
             Notify.create({
               message: `Error while get by id: ${error.message}`,
               color: "negative",
@@ -76,6 +107,29 @@ export const useAdosavokStore = defineStore({
           });
       }
     },
+
+    async fetchPaginatedStreets(params: IPaginatedParams): Promise<void> {
+      this.isLoading = true;
+      $axios
+        .get(
+          `api/utcak/${params.offset}/${params.limit}/${params.order}/${params.sort}/${params.keyword}`
+        )
+        .then((res) => {
+          if (res && res.data) {
+            this.dataN = res.data.utcak;
+            this.pagination.rowsNumber = res.data.count;
+          }
+          this.isLoading = false;
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          Notify.create({
+            message: `Error (${error.response.data.status}) while fetch paginated: ${error.response.data.message}`,
+            color: "negative",
+          });
+        });
+    },
+
     async editById(): Promise<void> {
       if (this.data && this.data._id) {
         const diff: any = {};
@@ -89,69 +143,63 @@ export const useAdosavokStore = defineStore({
             message: "Nothing changed!",
             color: "negative",
           });
-          process.exit(0);
-        }
-        Loading.show();
-        $axios
-          .patch(`api/adosavok/${this.data._id}`, diff)
-          .then((res) => {
-            Loading.hide();
-            if (res && res.data) {
-              // update dataN too:
-              const editedItemIndex = this.dataN.findIndex((x) => x._id == this.data._id);
-              this.dataN[editedItemIndex] = { ...this.data };
-              this.dataOld = { ...this.data };
+        } else {
+          this.isLoading = true;
+          $axios
+            .patch(`api/utcak/${this.data._id}`, diff)
+            .then((res) => {
+              this.isLoading = false;
+              if (res && res.data) {
+                this.dataOld = { ...this.data };
+                this.reloadCounter++; // reload paginated data
+                Notify.create({
+                  message: `Document with id=${res.data._id} has been edited successfully!`,
+                  color: "positive",
+                });
+              }
+            })
+            .catch((error) => {
+              this.isLoading = false;
               Notify.create({
-                message: `Document with id=${res.data._id} has been edited successfully!`,
-                color: "positive",
+                message: `Error (${error.response.data.status}) while edit by id: ${error.response.data.message}`,
+                color: "negative",
               });
-            }
-          })
-          .catch((error) => {
-            Loading.hide();
-            Notify.create({
-              message: `Error (${error.response.data.status}) while edit by id: ${error.response.data.message}`,
-              color: "negative",
             });
-          });
+        }
       }
     },
+
     async deleteById(): Promise<void> {
-      Loading.show();
       this.isLoading = true;
-      if (this.selected.length) {
+      while (this.selected.length) {
         const id_for_delete = this.selected.pop()?._id;
         await $axios
-          .delete(`api/adosavok/${id_for_delete}`)
+          .delete(`api/utcak/${id_for_delete}`)
           .then(() => {
-            // Loading.hide();
             Notify.create({
               message: `Document with id=${id_for_delete} has been deleted successfully!`,
               color: "positive",
             });
           })
           .catch((error) => {
-            // Loading.hide();
             Notify.create({
               message: `Error (${error.response.data.status}) while delete by id: ${error.response.data.message}`,
               color: "negative",
             });
           });
-        if (this.selected.length) this.deleteById();
-        else this.isLoading = false;
-        Loading.hide();
       }
+      this.isLoading = false;
+      this.reloadCounter++;
     },
+
     async create(): Promise<void> {
       if (this.data) {
-        Loading.show();
+        this.isLoading = true;
         $axios
-          .post("api/adosavok", this.data)
+          .post("api/utcak", this.data)
           .then((res) => {
-            Loading.hide();
+            this.isLoading = false;
             if (res && res.data) {
-              // update dataN too:
-              this.dataN.push({ ...this.data });
               Notify.create({
                 message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",
@@ -159,7 +207,7 @@ export const useAdosavokStore = defineStore({
             }
           })
           .catch((error) => {
-            Loading.hide();
+            this.isLoading = false;
             Notify.create({
               message: `Error (${error.response.data.status}) while create: ${error.response.data.message}`,
               color: "negative",

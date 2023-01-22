@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { useAppStore } from "../store/appStore";
-  import { useUtcakStore } from "../store/utcakStore";
-  import { useAdosavokStore } from "../store/adosavokStore";
+  import { useStreetsStore } from "../store/streetsStore";
+  import { useTaxBandsStore } from "../store/taxBandsStote";
 
   const appStore = useAppStore();
-  const utcakStore = useUtcakStore();
-  const adosavokStore = useAdosavokStore();
+  const utcakStore = useStreetsStore();
+  const adosavokStore = useTaxBandsStore();
 
   function Submit() {
     if (appStore.isEditDocument) utcakStore.editById();

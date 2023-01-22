@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 <script setup lang="ts">
   import { onMounted, ref, watch } from "vue";
-  import { useUtcakStore } from "../store/utcakStore";
+  import { useStreetsStore } from "../store/streetsStore";
   import { storeToRefs } from "pinia";
-  import { useAdosavokStore } from "../store/adosavokStore";
+  import { useTaxBandsStore } from "../store/taxBandsStote";
   import TxtWritter from "../components/TxtWriter.vue";
 
-  const utcakStore = useUtcakStore();
-  const adosavokStore = useAdosavokStore();
+  const utcakStore = useStreetsStore();
+  const adosavokStore = useTaxBandsStore();
   const utcakStat = new Map<string, string>();
   const fizetendoAdo = new Map<number, number>();
   const fizetendoTxt = ref("");

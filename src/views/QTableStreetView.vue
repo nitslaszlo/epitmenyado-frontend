@@ -1,47 +1,45 @@
 <script setup lang="ts">
   import { onMounted, watch } from "vue";
   import { useAppStore } from "../store/appStore";
-  import { useUtcakStore } from "../store/utcakStore";
-  import { useUsersStore } from "../store/usersStore";
+  import { useStreetsStore } from "../store/streetsStore";
   import { storeToRefs } from "pinia";
   import { QTableColumn } from "quasar";
-  import StreetDialog from "../components/StreetDialog.vue";
+  import StreetsDialog from "../components/StreetsDialog.vue";
 
   const appStore = useAppStore();
-  const utcakStore = useUtcakStore();
-  const usersStore = useUsersStore();
+  const streetsStore = useStreetsStore();
 
-  const { reloadCounter } = storeToRefs(utcakStore); // for watch changes and reload data
+  const { reloadCounter } = storeToRefs(streetsStore); // for watch changes and reload data
 
   watch(reloadCounter, () => {
     onRequest({
-      pagination: utcakStore.pagination,
+      pagination: streetsStore.pagination,
     });
   });
 
   function deleteRecord(): void {
-    utcakStore.deleteById();
+    streetsStore.deleteById();
   }
 
   function newRecord(): void {
-    utcakStore.data = {};
+    streetsStore.data = {};
     appStore.isEditDocument = false;
     appStore.showDialog = true;
   }
 
   function filterChanged(): void {
-    utcakStore.selected = [];
+    streetsStore.selected = [];
   }
 
   function editRecord(): void {
-    utcakStore.data = utcakStore.selected[0];
-    utcakStore.getById();
+    streetsStore.data = streetsStore.selected[0];
+    streetsStore.getById();
     appStore.isEditDocument = true;
     appStore.showDialog = true;
   }
 
   function clearSelection(): void {
-    utcakStore.selected = [];
+    streetsStore.selected = [];
   }
 
   const columns: QTableColumn[] = [
@@ -67,7 +65,7 @@
   function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending, filter } = props.pagination;
 
-    utcakStore.fetchPaginatedStreets({
+    streetsStore.fetchPaginatedStreets({
       offset: (page - 1) * rowsPerPage,
       limit: rowsPerPage,
       order: sortBy,
@@ -76,15 +74,15 @@
     });
 
     // don't forget to update local pagination object
-    utcakStore.pagination.page = page;
-    utcakStore.pagination.rowsPerPage = rowsPerPage;
-    utcakStore.pagination.sortBy = sortBy;
-    utcakStore.pagination.descending = descending;
+    streetsStore.pagination.page = page;
+    streetsStore.pagination.rowsPerPage = rowsPerPage;
+    streetsStore.pagination.sortBy = sortBy;
+    streetsStore.pagination.descending = descending;
   }
 
   onMounted(() => {
     onRequest({
-      pagination: utcakStore.pagination,
+      pagination: streetsStore.pagination,
     });
   });
 </script>
@@ -93,15 +91,15 @@
   <q-page>
     <div class="q-pa-md">
       <q-table
-        v-model:pagination="utcakStore.pagination"
-        v-model:selected="utcakStore.selected"
+        v-model:pagination="streetsStore.pagination"
+        v-model:selected="streetsStore.selected"
         binary-state-sort
         :columns="columns"
         dense
-        :filter="utcakStore.pagination.filter"
-        :loading="utcakStore.isLoading"
+        :filter="streetsStore.pagination.filter"
+        :loading="streetsStore.isLoading"
         row-key="_id"
-        :rows="utcakStore.dataN"
+        :rows="streetsStore.dataN"
         selection="multiple"
         :title="$t('streets')"
         wrap-cells
@@ -109,7 +107,7 @@
       >
         <template #top-right>
           <q-input
-            v-model="utcakStore.pagination.filter"
+            v-model="streetsStore.pagination.filter"
             debounce="300"
             dense
             placeholder="Search"
@@ -124,27 +122,32 @@
       <!-- Buttons:  -->
       <div class="row justify-center q-ma-sm q-gutter-sm">
         <q-btn
-          v-show="utcakStore.selected.length != 0"
+          v-show="streetsStore.selected.length != 0"
           color="orange"
           no-caps
           @click="clearSelection"
         >
-          {{ utcakStore.selected.length > 1 ? "Clear selections" : "Clear selection" }}
+          {{ streetsStore.selected.length > 1 ? "Clear selections" : "Clear selection" }}
         </q-btn>
-        <q-btn
-          v-show="usersStore.loggedUser && utcakStore.selected.length == 0"
-          color="green"
-          no-caps
-          @click="newRecord()"
-        >
+        <q-btn color="green" no-caps @click="newRecord()">
           {{ $t("newDocument") }}
         </q-btn>
-        <q-btn v-show="utcakStore.selected.length == 1" color="blue" no-caps @click="editRecord()">
+        <q-btn
+          v-show="streetsStore.selected.length == 1"
+          color="blue"
+          no-caps
+          @click="editRecord()"
+        >
           {{ $t("editDocument") }}
         </q-btn>
-        <q-btn v-show="utcakStore.selected.length != 0" color="red" no-caps @click="deleteRecord()">
+        <q-btn
+          v-show="streetsStore.selected.length != 0"
+          color="red"
+          no-caps
+          @click="deleteRecord()"
+        >
           {{
-            utcakStore.selected.length > 1 ? "Delete selected records" : "Delete selected record"
+            streetsStore.selected.length > 1 ? "Delete selected records" : "Delete selected record"
           }}
         </q-btn>
       </div>
@@ -154,7 +157,7 @@
     </div>
 
     <!-- Edit and New street document's dialog -->
-    <StreetDialog />
+    <StreetsDialog />
     <!-- Edit and New street document's dialog -->
   </q-page>
 </template>
