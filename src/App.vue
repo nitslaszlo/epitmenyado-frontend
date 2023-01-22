@@ -77,11 +77,7 @@
       <q-header class="bg-primary text-white text-left" elevated>
         <q-toolbar>
           <q-btn dense flat icon="mdi-menu" round @click="leftDrawer = !leftDrawer" />
-          <q-toolbar-title
-            id="title"
-            style="cursor: pointer"
-            @click="router.push({ path: '/startPage' })"
-          >
+          <q-toolbar-title id="title" style="cursor: pointer" @click="router.push({ path: '/startPage' })">
             <q-avatar>
               <img src="./assets/Jedlik_small.png" />
             </q-avatar>
@@ -96,14 +92,7 @@
         </q-toolbar>
       </q-header>
 
-      <q-drawer
-        v-model="leftDrawer"
-        bordered
-        :breakpoint="500"
-        :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
-        show-if-above
-        :width="200"
-      >
+      <q-drawer v-model="leftDrawer" bordered :breakpoint="500" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'" show-if-above :width="200">
         <q-scroll-area class="fit">
           <!-- routes: -->
           <q-list>
@@ -118,21 +107,13 @@
               </q-item>
               <q-separator v-if="menuItem.separator" :key="'sep' + index" />
             </template>
-            <q-item
-              clickable
-              :disable="usersStore.loggedUser == null"
-              :to="{ name: 'qtablestreet' }"
-            >
+            <q-item clickable :disable="usersStore.loggedUser == null" :to="{ name: 'qtablestreet' }">
               <q-item-section avatar>
                 <q-icon name="mdi-table" />
               </q-item-section>
               <q-item-section>{{ t("editStreets") }}</q-item-section>
             </q-item>
-            <q-item
-              clickable
-              :disable="usersStore.loggedUser == null"
-              :to="{ name: 'qtabletaxband' }"
-            >
+            <q-item clickable :disable="usersStore.loggedUser == null" :to="{ name: 'qtabletaxband' }">
               <q-item-section avatar>
                 <q-icon name="mdi-table" />
               </q-item-section>

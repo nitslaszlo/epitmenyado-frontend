@@ -34,33 +34,22 @@
             <h4 class="text-center q-mt-lg q-mb-none">
               {{ `${appStore.isEditDocument ? "Edit" : "New"} document` }}
             </h4>
-            <q-input
-              v-if="!appStore.isEditDocument"
-              v-model.number="utcakStore.data._id"
-              filled
-              label="_id:"
-              type="number"
-            />
+            <q-input v-if="!appStore.isEditDocument" v-model.number="utcakStore.data._id" filled label="_id:" type="number" />
             <q-select
               v-model="utcakStore.data.adosav"
               clearable
               emit-value
               filled
-              label="Adósáv:"
+              :label="$t('taxBand')"
               map-options
               option-label="sav"
               option-value="_id"
               :options="adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))"
             />
-            <q-input v-model.number="utcakStore.data.adoszam" filled label="Adószám:" type="text" />
-            <q-input v-model="utcakStore.data.utca" filled label="Utca:" type="text" />
-            <q-input v-model="utcakStore.data.hazszam" filled label="Házszám:" type="text" />
-            <q-input
-              v-model.number="utcakStore.data.terulet"
-              filled
-              label="Terület:"
-              type="number"
-            />
+            <q-input v-model.number="utcakStore.data.adoszam" filled :label="$t('taxNumber')" type="text" />
+            <q-input v-model="utcakStore.data.utca" filled :label="$t('street')" type="text" />
+            <q-input v-model="utcakStore.data.hazszam" filled :label="$t('houseNumber')" type="text" />
+            <q-input v-model.number="utcakStore.data.terulet" filled :label="$t('area')" type="number" />
             <div class="row justify-center">
               <q-btn class="q-mr-md" color="green" label="Mentés" no-caps type="submit" />
               <q-btn class="q-mr-md" color="red" label="Visszaállítás" no-caps type="reset" />

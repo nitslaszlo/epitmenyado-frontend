@@ -107,12 +107,7 @@
           <h4 class="text-center q-mt-lg q-mb-none">Építményadó feladat megoldása</h4>
           <p>2. feladat. A mintában {{ dataN.length }} telek szerepel.</p>
           <p>3. feladat.</p>
-          <q-input
-            v-model="utcakStore.data.adoszam"
-            filled
-            label="Egy tulajdonos adószáma"
-            type="number"
-          />
+          <q-input v-model="utcakStore.data.adoszam" filled label="Egy tulajdonos adószáma" type="number" />
           <div v-if="dataNfiltered.length > 0">
             <span v-for="(item, index) in dataNfiltered" :key="index">
               {{ item.utca }} utca {{ item.hazszam }}
@@ -121,18 +116,11 @@
           </div>
           <div v-else><span>Nem szerepel az adatállományban</span></div>
           <p>5. feladat.</p>
-          <span
-            v-for="(item, index) in adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))"
-            :key="index"
-          >
+          <span v-for="(item, index) in adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))" :key="index">
             {{ item.sav }} sávba
             {{ utcakStore.dataN.filter((x) => (x.adosav as ISav).sav == item.sav).length }}
             telek esik, az adó
-            {{
-              utcakStore.dataN
-                .filter((x) => (x.adosav as ISav).sav == item.sav)
-                .reduce((p, c) => p + ado(c.adosav, c.terulet), 0)
-            }}
+            {{ utcakStore.dataN.filter((x) => (x.adosav as ISav).sav == item.sav).reduce((p, c) => p + ado(c.adosav, c.terulet), 0) }}
             Ft.
             <br />
           </span>
@@ -144,16 +132,8 @@
             </template>
           </template>
           <p>7. feladat.</p>
-          <TxtWritter
-            :content="fizetendoTxt"
-            filename="fizetendo.txt"
-            title="fizetendo.txt írása"
-          />
-          <TxtWritter
-            :content="newUtcaTxt"
-            filename="utca.txt"
-            title="utca.txt írása a NoSQL adatbázisból"
-          />
+          <TxtWritter :content="fizetendoTxt" filename="fizetendo.txt" title="fizetendo.txt írása" />
+          <TxtWritter :content="newUtcaTxt" filename="utca.txt" title="utca.txt írása a NoSQL adatbázisból" />
         </q-form>
         <!-- <p>fizetendoAdó: {{ fizetendoTxt }}</p> -->
         <!-- <p>Data filtered: {{ dataNfiltered }}</p> -->

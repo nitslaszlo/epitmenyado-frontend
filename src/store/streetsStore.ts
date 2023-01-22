@@ -151,7 +151,7 @@ export const useStreetsStore = defineStore({
               this.isLoading = false;
               if (res && res.data) {
                 this.dataOld = { ...this.data };
-                this.reloadCounter++; // reload paginated data
+                this.reloadCounter++; // get paginated data again
                 Notify.create({
                   message: `Document with id=${res.data._id} has been edited successfully!`,
                   color: "positive",
@@ -176,6 +176,7 @@ export const useStreetsStore = defineStore({
         await $axios
           .delete(`api/utcak/${id_for_delete}`)
           .then(() => {
+            this.reloadCounter++; // get paginated data again
             Notify.create({
               message: `Document with id=${id_for_delete} has been deleted successfully!`,
               color: "positive",
@@ -189,7 +190,6 @@ export const useStreetsStore = defineStore({
           });
       }
       this.isLoading = false;
-      this.reloadCounter++;
     },
 
     async create(): Promise<void> {
@@ -200,6 +200,7 @@ export const useStreetsStore = defineStore({
           .then((res) => {
             this.isLoading = false;
             if (res && res.data) {
+              this.reloadCounter++; // get paginated data again
               Notify.create({
                 message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",

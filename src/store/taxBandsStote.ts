@@ -63,6 +63,7 @@ export const useTaxBandsStore = defineStore({
             Loading.hide();
             if (res && res.data) {
               this.data = res.data;
+              // make a copy of object into dataOld for edit (for reset and PATCH)
               Object.assign(this.dataOld, this.data);
             }
           })

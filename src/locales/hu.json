@@ -1,4 +1,6 @@
 {
+  "search": "Keresés",
+  "rowsPerPageLabel": "Dokumentum per oldal",
   "aboutMsg": "Ez egy névjegy oldal!",
   "colorsOfTheme": "A téma színei",
   "backToHome": "Vissza a kezdőlapra",
@@ -13,5 +15,16 @@
   "newDocument": "Új dokumentum",
   "editDocument": "Dokumentum szerkesztése",
   "streets": "Utcák",
-  "taxBands": "Adósávok"
+  "taxBands": "Adósávok",
+  "clearSelection": "Kijelölés törlése",
+  "clearSelections": "Kijelölések törlése",
+  "deleteSelectedDocument": "Kijelölt dokumentum törlése",
+  "deleteSelectedDocuments": "Kijeleölt dokumentumok törlése",
+  "tax": "Adó",
+  "taxNumber": "Adószám",
+  "taxBand": "Adósáv",
+  "street": "Utca",
+  "houseNumber": "Házszám",
+  "area": "Terület",
+  "boundary": "Határ"
 }

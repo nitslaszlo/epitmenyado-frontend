@@ -52,13 +52,7 @@
             type="text"
           />
           <div class="row justify-center">
-            <q-btn
-              class="q-mr-md"
-              color="green"
-              :label="anyLoggedUser ? 'Logout' : 'Login'"
-              no-caps
-              type="submit"
-            />
+            <q-btn class="q-mr-md" color="green" :label="anyLoggedUser ? 'Logout' : 'Login'" no-caps type="submit" />
           </div>
         </q-form>
       </div>

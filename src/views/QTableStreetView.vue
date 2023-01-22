@@ -5,11 +5,14 @@
   import { storeToRefs } from "pinia";
   import { QTableColumn } from "quasar";
   import StreetsDialog from "../components/StreetsDialog.vue";
+  import { useI18n } from "vue-i18n";
 
   const appStore = useAppStore();
   const streetsStore = useStreetsStore();
 
-  const { reloadCounter } = storeToRefs(streetsStore); // for watch changes and reload data
+  let { t } = useI18n();
+
+  const { reloadCounter } = storeToRefs(streetsStore); // for watch changes and get new data
 
   watch(reloadCounter, () => {
     onRequest({
@@ -17,18 +20,10 @@
     });
   });
 
-  function deleteRecord(): void {
-    streetsStore.deleteById();
-  }
-
   function newRecord(): void {
     streetsStore.data = {};
     appStore.isEditDocument = false;
     appStore.showDialog = true;
-  }
-
-  function filterChanged(): void {
-    streetsStore.selected = [];
   }
 
   function editRecord(): void {
@@ -38,29 +33,28 @@
     appStore.showDialog = true;
   }
 
-  function clearSelection(): void {
-    streetsStore.selected = [];
+  function columns(): QTableColumn[] {
+    let cols: QTableColumn[] = [
+      { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
+      { name: "adoszam", label: t("taxNumber"), field: "adoszam", align: "left", sortable: true },
+      {
+        name: "adosav",
+        label: t("taxBand"),
+        field: (row: any) => row.adosav.sav,
+        align: "center",
+      },
+      {
+        name: "ado",
+        label: t("tax"),
+        field: (row: any) => row.adosav.ado,
+        align: "center",
+      },
+      { name: "utca", label: t("street"), field: "utca", align: "left", sortable: true },
+      { name: "hazszam", label: t("houseNumber"), field: "hazszam", align: "left", sortable: true },
+      { name: "terulet", label: t("area"), field: "terulet", align: "left", sortable: true },
+    ];
+    return cols;
   }
-
-  const columns: QTableColumn[] = [
-    { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
-    { name: "adoszam", label: "Adószám", field: "adoszam", align: "left", sortable: true },
-    {
-      name: "adosav",
-      label: "Sáv",
-      field: (row: any) => row.adosav.sav,
-      align: "center",
-    },
-    {
-      name: "ado",
-      label: "Adó",
-      field: (row: any) => row.adosav.ado,
-      align: "center",
-    },
-    { name: "utca", label: "Utca", field: "utca", align: "left", sortable: true },
-    { name: "hazszam", label: "Házszám", field: "hazszam", align: "left", sortable: true },
-    { name: "terulet", label: "Terület", field: "terulet", align: "left", sortable: true },
-  ];
 
   function onRequest(props: any) {
     const { page, rowsPerPage, sortBy, descending, filter } = props.pagination;
@@ -94,12 +88,14 @@
         v-model:pagination="streetsStore.pagination"
         v-model:selected="streetsStore.selected"
         binary-state-sort
-        :columns="columns"
+        :columns="columns()"
         dense
         :filter="streetsStore.pagination.filter"
         :loading="streetsStore.isLoading"
+        :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => `${firstRowIndex}-${endRowIndex}/${totalRowsNumber}`"
         row-key="_id"
         :rows="streetsStore.dataN"
+        :rows-per-page-label="$t('rowsPerPageLabel')"
         selection="multiple"
         :title="$t('streets')"
         wrap-cells
@@ -110,8 +106,8 @@
             v-model="streetsStore.pagination.filter"
             debounce="300"
             dense
-            placeholder="Search"
-            @update:model-value="filterChanged()"
+            :placeholder="$t('search')"
+            @update:model-value="streetsStore.selected = []"
           >
             <template #append>
               <q-icon name="search" />
@@ -121,34 +117,17 @@
       </q-table>
       <!-- Buttons:  -->
       <div class="row justify-center q-ma-sm q-gutter-sm">
-        <q-btn
-          v-show="streetsStore.selected.length != 0"
-          color="orange"
-          no-caps
-          @click="clearSelection"
-        >
-          {{ streetsStore.selected.length > 1 ? "Clear selections" : "Clear selection" }}
+        <q-btn v-show="streetsStore.selected.length != 0" color="orange" no-caps @click="streetsStore.selected = []">
+          {{ streetsStore.selected.length > 1 ? $t("clearSelections") : $t("clearSelection") }}
         </q-btn>
         <q-btn color="green" no-caps @click="newRecord()">
           {{ $t("newDocument") }}
         </q-btn>
-        <q-btn
-          v-show="streetsStore.selected.length == 1"
-          color="blue"
-          no-caps
-          @click="editRecord()"
-        >
+        <q-btn v-show="streetsStore.selected.length == 1" color="blue" no-caps @click="editRecord()">
           {{ $t("editDocument") }}
         </q-btn>
-        <q-btn
-          v-show="streetsStore.selected.length != 0"
-          color="red"
-          no-caps
-          @click="deleteRecord()"
-        >
-          {{
-            streetsStore.selected.length > 1 ? "Delete selected records" : "Delete selected record"
-          }}
+        <q-btn v-show="streetsStore.selected.length != 0" color="red" no-caps @click="streetsStore.deleteById()">
+          {{ streetsStore.selected.length > 1 ? $t("deleteSelectedDocuments") : $t("deleteSelectedDocument") }}
         </q-btn>
       </div>
       <!-- <p>Pagination object: {{ pagination }}</p> -->

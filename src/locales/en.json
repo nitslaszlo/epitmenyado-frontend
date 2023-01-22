@@ -1,4 +1,6 @@
 {
+  "search": "Search",
+  "rowsPerPageLabel": "Documents per page",
   "aboutMsg": "This is an about page!",
   "colorsOfTheme": "Colors of theme",
   "backToHome": "Back to start page",
@@ -13,5 +15,16 @@
   "newDocument": "New document",
   "editDocument": "Edit document",
   "streets": "Streets",
-  "taxBands": "Tax bands"
+  "taxBands": "Tax bands",
+  "clearSelection": "Clear selection",
+  "clearSelections": "Clear selections",
+  "deleteSelectedDocument": "Delete selected document",
+  "deleteSelectedDocuments": "Delete selected documents",
+  "tax": "Tax",
+  "taxNumber": "Tax number",
+  "taxBand": "Tax band",
+  "street": "Street",
+  "houseNumber": "House number",
+  "area": "Area",
+  "boundary": "Boundary"
 }
