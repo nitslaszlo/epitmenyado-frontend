@@ -104,7 +104,7 @@
     <div class="row justify-center">
       <div v-if="utcakStore.dataN" class="col-12 col-sm-8 col-md-6 col-lg-4 q-gutter-md">
         <q-form class="q-gutter-md">
-          <h4 class="text-center q-mt-lg q-mb-none">Építményadó feladat megoldása</h4>
+          <h4 class="text-center q-mt-lg q-mb-none">Építményadó feladat megoldása (2023)</h4>
           <p>2. feladat. A mintában {{ dataN.length }} telek szerepel.</p>
           <p>3. feladat.</p>
           <q-input v-model="utcakStore.data.adoszam" filled label="Egy tulajdonos adószáma" type="number" />
