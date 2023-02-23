@@ -45,5 +45,8 @@
     "editor.defaultFormatter": "vscode.json-language-features"
   },
   "vscode-edge-devtools.mirrorEdits": true,
-  "vscode-edge-devtools.webhint": false
+  "vscode-edge-devtools.webhint": false,
+  "i18n-ally.localesPaths": [
+    "src/locales"
+  ]
 }

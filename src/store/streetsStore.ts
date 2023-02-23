@@ -19,8 +19,8 @@ interface IPaginatedParams {
 }
 
 interface IFields {
-  _id?: number; // PK
-  adosav?: number | { sav: string; ado: number; hatar: number }; // FK
+  _id?: string; // PK
+  adosav_id?: string | { sav: string; ado: number; hatar: number }; // FK
   adoszam?: number;
   utca?: string;
   hazszam?: string;
@@ -111,9 +111,7 @@ export const useStreetsStore = defineStore({
     async fetchPaginatedStreets(params: IPaginatedParams): Promise<void> {
       this.isLoading = true;
       $axios
-        .get(
-          `api/utcak/${params.offset}/${params.limit}/${params.order}/${params.sort}/${params.keyword}`
-        )
+        .get(`api/utcak/${params.offset}/${params.limit}/${params.order}/${params.sort}/${params.keyword}`)
         .then((res) => {
           if (res && res.data) {
             this.dataN = res.data.utcak;

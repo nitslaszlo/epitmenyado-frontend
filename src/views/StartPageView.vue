@@ -42,7 +42,7 @@
     dataNfiltered.value = dataN.value.filter((x) => x.adoszam == data.value.adoszam);
     for (const item of dataN.value) {
       const aktUtca: string = item.utca as string;
-      const aktAdosáv: ISav = item.adosav as ISav;
+      const aktAdosáv: ISav = item.adosav_id as ISav;
       if (!utcakStat.has(aktUtca)) {
         utcakStat.set(aktUtca, aktAdosáv.sav);
       } else {
@@ -53,7 +53,7 @@
     }
     // fizetendo.txt állományhoz a fizetendoTxt tartalmának összeállítása
     for (const item of dataN.value) {
-      const aktAdosáv: ISav = item.adosav as ISav;
+      const aktAdosáv: ISav = item.adosav_id as ISav;
       const adószám: number = item.adoszam as number;
       const terület: number = item.terulet as number;
       if (!fizetendoAdo.has(adószám)) {
@@ -87,7 +87,7 @@
         sensitivity: "base",
       })
     )) {
-      const aktAdosáv: string = (e.adosav as ISav).sav;
+      const aktAdosáv: string = (e.adosav_id as ISav).sav;
       newUtcaTxt.value += `${e.adoszam} ${e.utca} ${e.hazszam} ${aktAdosáv} ${e.terulet}\r\n`;
     }
   });
@@ -118,9 +118,9 @@
           <p>5. feladat.</p>
           <span v-for="(item, index) in adosavokStore.dataN.sort((a, b) => a.sav!.localeCompare(b.sav!))" :key="index">
             {{ item.sav }} sávba
-            {{ utcakStore.dataN.filter((x) => (x.adosav as ISav).sav == item.sav).length }}
+            {{ utcakStore.dataN.filter((x) => (x.adosav_id as ISav).sav == item.sav).length }}
             telek esik, az adó
-            {{ utcakStore.dataN.filter((x) => (x.adosav as ISav).sav == item.sav).reduce((p, c) => p + ado(c.adosav, c.terulet), 0) }}
+            {{ utcakStore.dataN.filter((x) => (x.adosav_id as ISav).sav == item.sav).reduce((p, c) => p + ado(c.adosav_id, c.terulet), 0) }}
             Ft.
             <br />
           </span>

@@ -12,6 +12,7 @@
     "@quasar/extras": "^1.15.10",
     "axios": "^1.2.3",
     "pinia": "^2.0.29",
+    "pinia-plugin-persist": "^1.0.0",
     "quasar": "^2.11.5",
     "tslib": "^2.4.1",
     "velocity-animate": "^1.5.2",

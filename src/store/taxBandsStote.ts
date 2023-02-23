@@ -10,7 +10,7 @@ Notify.setDefaults({
 });
 
 interface IFields {
-  _id?: number; // PK
+  _id?: string; // PK
   sav?: string;
   ado?: number;
   hatar?: number;

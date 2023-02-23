@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "lib": ["esnext", "dom"],
-    "types": ["node", "vite/client", "@intlify/unplugin-vue-i18n/messages"],
+    "types": ["node", "vite/client", "@intlify/unplugin-vue-i18n/messages", "pinia-plugin-persist"],
     "paths": {
       "src/*": ["src/*"],
       "/src/*": ["src/*"],

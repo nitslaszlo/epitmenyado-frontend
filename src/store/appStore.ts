@@ -11,4 +11,7 @@ export const useAppStore = defineStore({
     showDialog: false,
     isEditDocument: false,
   }),
+  persist: {
+    enabled: true,
+  },
 });
