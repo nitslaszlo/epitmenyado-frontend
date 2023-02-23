@@ -70,7 +70,7 @@ export const useStreetsStore = defineStore({
       this.isLoading = true;
       this.dataN = [];
       $axios
-        .get("api/utcak")
+        .get("utcak")
         .then((res) => {
           this.isLoading = false;
           if (res && res.data) {
@@ -90,7 +90,7 @@ export const useStreetsStore = defineStore({
       if (this.data && this.data._id) {
         this.isLoading = true;
         $axios
-          .get(`api/utcak/${this.data._id}`)
+          .get(`utcak/${this.data._id}`)
           .then((res) => {
             this.isLoading = false;
             if (res && res.data) {
@@ -111,7 +111,7 @@ export const useStreetsStore = defineStore({
     async fetchPaginatedStreets(params: IPaginatedParams): Promise<void> {
       this.isLoading = true;
       $axios
-        .get(`api/utcak/${params.offset}/${params.limit}/${params.order}/${params.sort}/${params.keyword}`)
+        .get(`utcak/${params.offset}/${params.limit}/${params.order}/${params.sort}/${params.keyword}`)
         .then((res) => {
           if (res && res.data) {
             this.dataN = res.data.utcak;
@@ -144,7 +144,7 @@ export const useStreetsStore = defineStore({
         } else {
           this.isLoading = true;
           $axios
-            .patch(`api/utcak/${this.data._id}`, diff)
+            .patch(`utcak/${this.data._id}`, diff)
             .then((res) => {
               this.isLoading = false;
               if (res && res.data) {
@@ -172,7 +172,7 @@ export const useStreetsStore = defineStore({
       while (this.selected.length) {
         const id_for_delete = this.selected.pop()?._id;
         await $axios
-          .delete(`api/utcak/${id_for_delete}`)
+          .delete(`utcak/${id_for_delete}`)
           .then(() => {
             this.reloadCounter++; // get paginated data again
             Notify.create({
@@ -194,7 +194,7 @@ export const useStreetsStore = defineStore({
       if (this.data) {
         this.isLoading = true;
         $axios
-          .post("api/utcak", this.data)
+          .post("utcak", this.data)
           .then((res) => {
             this.isLoading = false;
             if (res && res.data) {

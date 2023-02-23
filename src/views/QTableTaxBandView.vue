@@ -26,7 +26,7 @@
 
   function columns(): QTableColumn[] {
     let cols: QTableColumn[] = [
-      { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
+      // { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
       { name: "sav", label: t("taxBand"), field: "sav", align: "left", sortable: true },
       { name: "ado", label: t("tax"), field: "ado", align: "left", sortable: true },
       { name: "hatar", label: t("boundary"), field: "hatar", align: "left", sortable: true },

@@ -48,5 +48,6 @@
   "vscode-edge-devtools.webhint": false,
   "i18n-ally.localesPaths": [
     "src/locales"
-  ]
+  ],
+  "volar.inlayHints.eventArgumentInInlineHandlers": false
 }

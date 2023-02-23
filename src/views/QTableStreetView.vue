@@ -35,18 +35,18 @@
 
   function columns(): QTableColumn[] {
     let cols: QTableColumn[] = [
-      { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
+      // { name: "_id", label: "_id", field: "_id", align: "left", sortable: true },
       { name: "adoszam", label: t("taxNumber"), field: "adoszam", align: "left", sortable: true },
       {
-        name: "adosav",
+        name: "adosav_id",
         label: t("taxBand"),
-        field: (row: any) => row.adosav.sav,
+        field: (row: any) => row.adosav_id.sav,
         align: "center",
       },
       {
         name: "ado",
         label: t("tax"),
-        field: (row: any) => row.adosav.ado,
+        field: (row: any) => row.adosav_id.ado,
         align: "center",
       },
       { name: "utca", label: t("street"), field: "utca", align: "left", sortable: true },
