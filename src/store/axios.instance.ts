@@ -6,7 +6,7 @@ import axios from "axios";
 // });
 
 const $axios = axios.create({
-  baseURL: "https://epitmenyado2023.cyclic.app/",
+  baseURL: "https://epitmenyado.cyclic.app/",
   withCredentials: true,
 });
 
