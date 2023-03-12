@@ -102,7 +102,11 @@ export const useStreetsStore = defineStore({
     async fetchPaginatedStreets(): Promise<void> {
       this.isLoading = true;
       $axios
-        .get(`utcak/${(this.pagination.page as number) - 1}/${this.pagination.rowsPerPage}/${this.pagination.sortBy}/${this.pagination.filter}`)
+        .get(
+          `utcak/${(this.pagination.page as number) - 1}/${this.pagination.rowsPerPage}/${this.pagination.descending ? "" : "-"}${
+            this.pagination.sortBy
+          }/${this.pagination.filter}`
+        )
         .then((res) => {
           if (res && res.data) {
             this.dataN = res.data.utcak;
