@@ -36,7 +36,7 @@
             </h4>
             <q-input v-if="!appStore.isEditDocument" v-model.number="utcakStore.data._id" filled label="_id:" type="number" />
             <q-select
-              v-model="utcakStore.data._id"
+              v-model="utcakStore.data.adosav_id"
               clearable
               emit-value
               filled

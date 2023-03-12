@@ -10,14 +10,6 @@ Notify.setDefaults({
   progress: true,
 });
 
-interface IPaginatedParams {
-  offset: number;
-  limit: string;
-  order: string;
-  sort: string;
-  keyword?: string;
-}
-
 interface IFields {
   _id?: string; // PK
   adosav_id?: string | { sav: string; ado: number; hatar: number }; // FK
@@ -29,7 +21,7 @@ interface IFields {
 
 interface IPagination {
   sortBy?: string;
-  descending?: false;
+  descending?: boolean;
   page?: number;
   rowsPerPage?: number;
   rowsNumber?: number;
@@ -43,7 +35,6 @@ interface IState {
   dataOld: IFields; // temporary object for patch method (store data here before edit)
   selected: Array<IFields>;
   isLoading: boolean;
-  reloadCounter: number;
   pagination: IPagination;
 }
 
@@ -56,10 +47,8 @@ export const useStreetsStore = defineStore({
     dataOld: {},
     selected: [],
     isLoading: false,
-    reloadCounter: 0,
     pagination: {
       sortBy: "utca",
-      descending: false,
       rowsPerPage: 10,
       filter: "",
     },
@@ -72,17 +61,18 @@ export const useStreetsStore = defineStore({
       $axios
         .get("utcak")
         .then((res) => {
-          this.isLoading = false;
           if (res && res.data) {
             this.dataN = res.data;
           }
         })
         .catch((error) => {
-          this.isLoading = false;
           Notify.create({
             message: `Error (${error.response.data.status}) while get all: ${error.response.data.message}`,
             color: "negative",
           });
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
     },
 
@@ -92,39 +82,41 @@ export const useStreetsStore = defineStore({
         $axios
           .get(`utcak/${this.data._id}`)
           .then((res) => {
-            this.isLoading = false;
             if (res && res.data) {
               this.data = res.data;
               Object.assign(this.dataOld, this.data);
             }
           })
           .catch((error) => {
-            this.isLoading = false;
             Notify.create({
               message: `Error while get by id: ${error.message}`,
               color: "negative",
             });
+          })
+          .finally(() => {
+            this.isLoading = false;
           });
       }
     },
 
-    async fetchPaginatedStreets(params: IPaginatedParams): Promise<void> {
+    async fetchPaginatedStreets(): Promise<void> {
       this.isLoading = true;
       $axios
-        .get(`utcak/${params.offset}/${params.limit}/${params.order}/${params.sort}/${params.keyword}`)
+        .get(`utcak/${(this.pagination.page as number) - 1}/${this.pagination.rowsPerPage}/${this.pagination.sortBy}/${this.pagination.filter}`)
         .then((res) => {
           if (res && res.data) {
             this.dataN = res.data.utcak;
             this.pagination.rowsNumber = res.data.count;
           }
-          this.isLoading = false;
         })
         .catch((error) => {
-          this.isLoading = false;
           Notify.create({
             message: `Error (${error.response.data.status}) while fetch paginated: ${error.response.data.message}`,
             color: "negative",
           });
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
     },
 
@@ -146,10 +138,8 @@ export const useStreetsStore = defineStore({
           $axios
             .patch(`utcak/${this.data._id}`, diff)
             .then((res) => {
-              this.isLoading = false;
               if (res && res.data) {
                 this.dataOld = { ...this.data };
-                this.reloadCounter++; // get paginated data again
                 Notify.create({
                   message: `Document with id=${res.data._id} has been edited successfully!`,
                   color: "positive",
@@ -157,11 +147,13 @@ export const useStreetsStore = defineStore({
               }
             })
             .catch((error) => {
-              this.isLoading = false;
               Notify.create({
                 message: `Error (${error.response.data.status}) while edit by id: ${error.response.data.message}`,
                 color: "negative",
               });
+            })
+            .finally(() => {
+              this.fetchPaginatedStreets();
             });
         }
       }
@@ -174,7 +166,6 @@ export const useStreetsStore = defineStore({
         await $axios
           .delete(`utcak/${id_for_delete}`)
           .then(() => {
-            this.reloadCounter++; // get paginated data again
             Notify.create({
               message: `Document with id=${id_for_delete} has been deleted successfully!`,
               color: "positive",
@@ -185,9 +176,13 @@ export const useStreetsStore = defineStore({
               message: `Error (${error.response.data.status}) while delete by id: ${error.response.data.message}`,
               color: "negative",
             });
+          })
+          .finally(() => {
+            if (this.selected.length == 0) {
+              this.fetchPaginatedStreets();
+            }
           });
       }
-      this.isLoading = false;
     },
 
     async create(): Promise<void> {
@@ -196,9 +191,7 @@ export const useStreetsStore = defineStore({
         $axios
           .post("utcak", this.data)
           .then((res) => {
-            this.isLoading = false;
             if (res && res.data) {
-              this.reloadCounter++; // get paginated data again
               Notify.create({
                 message: `New document with id=${res.data._id} has been saved successfully!`,
                 color: "positive",
@@ -206,11 +199,13 @@ export const useStreetsStore = defineStore({
             }
           })
           .catch((error) => {
-            this.isLoading = false;
             Notify.create({
               message: `Error (${error.response.data.status}) while create: ${error.response.data.message}`,
               color: "negative",
             });
+          })
+          .finally(() => {
+            this.fetchPaginatedStreets();
           });
       }
     },

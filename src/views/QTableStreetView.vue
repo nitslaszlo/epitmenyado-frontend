@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { onMounted, watch } from "vue";
+  import { onMounted } from "vue";
   import { useAppStore } from "../store/appStore";
   import { useStreetsStore } from "../store/streetsStore";
-  import { storeToRefs } from "pinia";
-  import { QTableColumn } from "quasar";
+  import { QTableColumn, QTableProps } from "quasar";
   import StreetsDialog from "../components/StreetsDialog.vue";
   import { useI18n } from "vue-i18n";
 
@@ -11,14 +10,6 @@
   const streetsStore = useStreetsStore();
 
   let { t } = useI18n();
-
-  const { reloadCounter } = storeToRefs(streetsStore); // for watch changes and get new data
-
-  watch(reloadCounter, () => {
-    onRequest({
-      pagination: streetsStore.pagination,
-    });
-  });
 
   function newRecord(): void {
     streetsStore.data = {};
@@ -42,12 +33,14 @@
         label: t("taxBand"),
         field: (row: any) => row.adosav_id.sav,
         align: "center",
+        sortable: true,
       },
       {
         name: "ado",
         label: t("tax"),
         field: (row: any) => row.adosav_id.ado,
         align: "center",
+        sortable: true,
       },
       { name: "utca", label: t("street"), field: "utca", align: "left", sortable: true },
       { name: "hazszam", label: t("houseNumber"), field: "hazszam", align: "left", sortable: true },
@@ -56,22 +49,16 @@
     return cols;
   }
 
-  function onRequest(props: any) {
-    const { page, rowsPerPage, sortBy, descending, filter } = props.pagination;
+  function onRequest(props: QTableProps) {
+    if (props.pagination) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination;
+      streetsStore.pagination.page = page as number;
+      streetsStore.pagination.rowsPerPage = rowsPerPage as number;
+      streetsStore.pagination.sortBy = sortBy as string;
+      streetsStore.pagination.descending = descending as boolean;
 
-    streetsStore.fetchPaginatedStreets({
-      offset: (page - 1) * rowsPerPage,
-      limit: rowsPerPage,
-      order: sortBy,
-      sort: descending ? "-1" : "1",
-      keyword: filter,
-    });
-
-    // don't forget to update local pagination object
-    streetsStore.pagination.page = page;
-    streetsStore.pagination.rowsPerPage = rowsPerPage;
-    streetsStore.pagination.sortBy = sortBy;
-    streetsStore.pagination.descending = descending;
+      streetsStore.fetchPaginatedStreets(); // get posts
+    }
   }
 
   onMounted(() => {
